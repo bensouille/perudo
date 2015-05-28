@@ -47,9 +47,23 @@ echo -e "${Blue}##########################################${ResetColor}"
 }
 
 
+function nbjoueurs () {
+#Defini le nombre de joueurs
+tput cup 4 20
+echo -n "combien de joeurs ? : "
+
+}
+
+
+function attente () {
+#Attente des joueurs
+
+}
 
 #Code
 
 intro
+
+
 
 $HOME/perudoclt.sh

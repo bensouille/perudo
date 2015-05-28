@@ -38,22 +38,22 @@ BlueCyan="$(tput bold ; tput setaf 6)"
 
 function nomjoueur () {
 #
-tput cup 4 20
+tput cup 10 20
 echo -e "${Red}  Bonjour `whoami`, voici ton premier lancé  ${ResetColor}"
 }
 
 function lance () {
 #Affiche le premier lancé de dés
-tput cup 5 20
+tput cup 11 20
 echo -e "${Blue}         #####################${ResetColor}"
  
-tput cup 6 20
+tput cup 12 20
 echo -e "${Red}         #       ${JOUEUR}        #${ResetColor}"
 
-tput cup 7 20
+tput cup 13 20
 echo -e "${Green}         #`tput bold`[`if [ ${DES1} = 1 ] ; then echo @ ; else echo ${DES1} ; fi`] [`if [ ${DES2} = 1 ] ; then echo @ ; else echo ${DES2} ; fi`] [`if [ ${DES3} = 1 ] ; then echo @ ; else echo ${DES3} ; fi`] [`if [ ${DES4} = 1 ] ; then echo @ ; else echo ${DES4} ; fi`] [`if [ ${DES5} = 1 ] ; then echo @ ; else echo ${DES5} ; fi`]#${ResetColor}"
  
-tput cup 8 20
+tput cup 14 20
 echo -e "${Blue}         #####################${ResetColor}"
 
 i=$((i+1))
