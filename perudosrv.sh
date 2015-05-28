@@ -50,7 +50,8 @@ echo -e "${Blue}##########################################${ResetColor}"
 function nbjoueurs () {
 #Defini le nombre de joueurs
 tput cup 4 20
-echo -n "combien de joeurs ? : "
+echo -n "combien de joueurs ? : "
+read nbjoueurs
 
 }
 
