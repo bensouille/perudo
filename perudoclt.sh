@@ -110,13 +110,13 @@ fi)
 
 function premier () {
 #Premiere annonce du premier joueur
-tput cup 9 27
+tput cup 15 27
 echo "${Green}Que souhaites-tu annoncer ?${ResetColor}"
-tput cup 10 23
+tput cup 16 23
 echo "${Green}Exemples : 2D2 ou 3d5 ou 46 ou 6.4${ResetColor}"
-tput cup 12 0
+tput cup 17 0
 echo "${Red}ATTENTION !!! Au premier tour tu n'as pas le droit d'utiliser les DUDO !!!${ResetColor}"
-tput cup 14 0
+tput cup 18 0
 echo -n "${Green}Ton choix :${ResetColor} " 
 
 while read -r option1; do
