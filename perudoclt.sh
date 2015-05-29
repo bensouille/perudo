@@ -38,22 +38,22 @@ BlueCyan="$(tput bold ; tput setaf 6)"
 
 function nomjoueur () {
 #
-tput cup 10 20
+tput cup 20 20
 echo -e "${Red}  Bonjour `whoami`, voici ton premier lancé  ${ResetColor}"
 }
 
 function lance () {
 #Affiche le premier lancé de dés
-tput cup 11 20
+tput cup 21 20
 echo -e "${Blue}         #####################${ResetColor}"
  
-tput cup 12 20
+tput cup 22 20
 echo -e "${Red}         #       ${JOUEUR}        #${ResetColor}"
 
-tput cup 13 20
+tput cup 23 20
 echo -e "${Green}         #`tput bold`[`if [ ${DES1} = 1 ] ; then echo @ ; else echo ${DES1} ; fi`] [`if [ ${DES2} = 1 ] ; then echo @ ; else echo ${DES2} ; fi`] [`if [ ${DES3} = 1 ] ; then echo @ ; else echo ${DES3} ; fi`] [`if [ ${DES4} = 1 ] ; then echo @ ; else echo ${DES4} ; fi`] [`if [ ${DES5} = 1 ] ; then echo @ ; else echo ${DES5} ; fi`]#${ResetColor}"
  
-tput cup 14 20
+tput cup 24 20
 echo -e "${Blue}         #####################${ResetColor}"
 
 i=$((i+1))
@@ -110,13 +110,13 @@ fi)
 
 function premier () {
 #Premiere annonce du premier joueur
-tput cup 15 27
+tput cup 25 27
 echo "${Green}Que souhaites-tu annoncer ?${ResetColor}"
-tput cup 16 23
+tput cup 26 23
 echo "${Green}Exemples : 2D2 ou 3d5 ou 46 ou 6.4${ResetColor}"
-tput cup 17 0
+tput cup 27 0
 echo "${Red}ATTENTION !!! Au premier tour tu n'as pas le droit d'utiliser les DUDO !!!${ResetColor}"
-tput cup 18 0
+tput cup 28 0
 echo -n "${Green}Ton choix :${ResetColor} " 
 
 while read -r option1; do
@@ -127,7 +127,6 @@ if [ $? -eq 0 ] ; then echo "${Green}OK${ResetColor}" ; break ; else echo -n "${
 		done 
 
 }
-
 
 
 

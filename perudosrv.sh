@@ -56,37 +56,53 @@ function joueurs () {
 #Defini le nombre de joueurs
 	
 ${line} 4 30		
-echo -n "combien de joueurs ? : " 
+echo -n "${Red}Combien de joueurs ? : ${ResetColor}" 
 
 while true ; do
-${line} 5 30
-read -r nbjoueurs
-	echo -n "${Red}Ton choix est ${nbjoueurs}${ResetColor} "
+	
+	read -r nbjoueurs
+
+${line} 5 25
+	echo -n "${Green}Ton choix est ${nbjoueurs}${ResetColor} "
+	
 	if [ ${nbjoueurs} -le 6 ] ; 
-		then echo "C'est tout bon !" ; break ; 
-${line} 5 30		
+	
+		then echo "${Green}C'est tout bon !${ResetColor}" ; break ; 
+${line} 6 20		
+
 		else echo -n "${Red}Trop de joueurs ! Repeat again : ${ResetColor}" ; 
+	
 	fi 
 		done 
 
+${line} 7 30
+	echo "${BlueCyan}NB joueurs connectés : ${userco}${ResetColor}"
+${line} 8 30
+	echo "${BlueCyan}NB joueurs selectionné : ${nbjoueurs}${ResetColor}"
 }
 
 
 function attente () {
 # Attente des joueurs
-	${line} 7 30
-	echo " nb joueurs connectés : ${userco}"
-	${line} 8 30
-	echo " nb joueurs selectionné : ${nbjoueurs}"
+	
 
 	${line} 9 30
-	while [ ${userco} -lt ${nbjoueurs} ]
-	 do
-		echo -e "en attente des joueurs"
-		sleep 60
+	while true ; do 
+	userco=`who | wc -l`
+	${line} 9 30
+	if [ ${userco} -eq ${nbjoueurs} ] ; 
+		then break ;
+		else echo -e "${BlueCyan}En attente des joueurs...${ResetColor}" ;
+			for a in 5 4 3 2 1 0
+				do
+					${line} 10 30
+					echo "${a}"
+				done
+
+	fi
 	done
 
-	echo "lancement de la partie !"
+	echo "${Green}lancement de la partie !${ResetColor}"
 
 }
 
