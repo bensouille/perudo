@@ -39,7 +39,7 @@ BlueCyan="$(tput bold ; tput setaf 6)"
 function nomjoueur () {
 #
 tput cup 20 20
-echo -e "${Red}  Bonjour `whoami`, voici ton premier lancé  ${ResetColor}"
+echo -e "${Red}  Bonjour `whoami`, voici ton premier lancer  ${ResetColor}"
 }
 
 function lance () {

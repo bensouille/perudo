@@ -1,5 +1,5 @@
 #!/bin/bash
-# set -x
+#set -x
 ####PERRUDO SRV####
 
 #### Initialisation des variables ####
@@ -53,37 +53,63 @@ function intro () {
 
 
 function joueurs () {
-#Defini le nombre de joueurs
+
 while true ; do
 ${line} 4 22
-echo -n "${Red}Nouvelle partie, combien de joueurs ? : ${ResetColor}"
-read -r nbjoueurs
-${line} 5 25
-echo -e "${Green}Ton choix est ${nbjoueurs}  ${ResetColor} " ;
-${line} 6 25
-if [ -z ${nbjoueurs} ] ;
-	then
-		echo "mettre un chiffre ! ;) " ;
-	else
-		echo "${nbjoueurs}" | grep -e '^[[:digit:]]*$' > /dev/null ;
-			if  [ $? -eq 0 ] ; 
-				then
-					if [ ${nbjoueurs} -le 6 ] && [ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -eq ${userco} ] ; 				
-						then  
-							echo "${Green}Impec ${ResetColor}" 
-							break 
-						else
-							echo "Trop ou pas assez de joueurs" 
-											
-					fi
+
+	echo -n "${Red}mettre un chiffre entre 2 et 6 please ! ${ResetColor}" && read -r nbjoueurs; 
+${line} 5 22	
+	[ -z ${nbjoueurs} ] && read -r nbjoueurs ;
+
+	echo "${nbjoueurs}" | grep -e '^[[:digit:]]*$'  > /dev/null ;
+ 		if ! [ $? -eq 0 ] ; 
+ 			then
+ 				echo "${Red}Un chiffre${ResetColor}" && joueurs ; 
+ 		fi
+
+	[ ${nbjoueurs} -gt 6 ] && echo -n "${Red}Attention tu peux pas jouer à plus de 6 !!${ResetColor}" ;
+	
+	[ ${nbjoueurs} -eq 1 ] && echo -n "${Red}Attention tu peux pas jouer tout seul !!${ResetColor}" ;
+	
+	[ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -ne ${userco} ] && echo -n "${Green}pas assez de joueurs${ResetColor}" ; # en attente ou pas, un case
+
+	[ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -eq ${userco} ] && echo -n "${Green}ok Go${ResetColor}" && break ;
+
+	
+done
+
+# #Defini le nombre de joueurs
+# while true ; do
+# ${line} 4 22
+# echo -n "${Red}Nouvelle partie, combien de joueurs ? : ${ResetColor}"
+# read -r nbjoueurs
+# ${line} 5 25
+# echo -e "${Green}Ton choix est ${nbjoueurs}${ResetColor} " ;
+# ${line} 6 25
+# if [ -z ${nbjoueurs} ] ;
+# 	then
+# 		echo "mettre un chiffre ! ;) " ;
+# 	else
+# 		echo "${nbjoueurs}" | grep -e '^[[:digit:]]*$' > /dev/null ;
+# 			if  [ $? -eq 0 ] ; 
+# 				then
+# 					if [ ${nbjoueurs} -le 6 ] && [ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -eq ${userco} ] ; 				
+# 						then  
+# 							echo "${Green}Impec ${ResetColor}" 
+# 							break 
+# 							if ! [ ${nbjoueurs} -ge 6 ] ;
+# 								then 
+# 									${line} 6 25
+# 									echo "${Blue}En attente des joueurs !${ResetColor}" 
+# 							fi			
+# 					fi
 						
-				else
-					echo -n "${Green}mettre un chiffre entre 2 et 6 please ! ${ResetColor}" ;
-			fi
-fi
+# 				else
+# 					echo -n "${Green}mettre un chiffre entre 2 et 6 please ! ${ResetColor}" ;
+# 			fi
+# fi
 
-done 
-
+# done 
 
 ${line} 7 30
 	echo "${BlueCyan}NB joueurs connectés : ${userco}${ResetColor}"
