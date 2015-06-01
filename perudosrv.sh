@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -x
+# set -x
 ####PERRUDO SRV####
 
 #### Initialisation des variables ####
@@ -58,20 +58,21 @@ while true ; do
 ${line} 4 22
 
 	echo -n "${Red}mettre un chiffre entre 2 et 6 please ! ${ResetColor}" && read -r nbjoueurs; 
-${line} 5 22	
-	[ -z ${nbjoueurs} ] && read -r nbjoueurs ;
-
+${line} 4 62	
+	[ -z ${nbjoueurs} ] || [ ${nbjoueurs} = "" ] && joueurs ;
+	
+${line} 5 22
 	echo "${nbjoueurs}" | grep -e '^[[:digit:]]*$'  > /dev/null ;
  		if ! [ $? -eq 0 ] ; 
  			then
  				echo "${Red}Un chiffre${ResetColor}" && joueurs ; 
  		fi
-
+${line} 5 22
 	[ ${nbjoueurs} -gt 6 ] && echo -n "${Red}Attention tu peux pas jouer à plus de 6 !!${ResetColor}" ;
-	
+${line} 6 22	
 	[ ${nbjoueurs} -eq 1 ] && echo -n "${Red}Attention tu peux pas jouer tout seul !!${ResetColor}" ;
 	
-	[ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -ne ${userco} ] && echo -n "${Green}pas assez de joueurs${ResetColor}" ; # en attente ou pas, un case
+	[ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -ne ${userco} ] && echo -n "${Green}Trop ou pas assez de joueurs${ResetColor}" ; # en attente ou pas, un case
 
 	[ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -eq ${userco} ] && echo -n "${Green}ok Go${ResetColor}" && break ;
 
