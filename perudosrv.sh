@@ -82,7 +82,7 @@ if [ -z ${nbjoueurs} ] ;
 							fi
 					fi	
 				else
-					echo -n "${Green}mettre un chiffre entre 1 et 6 please ! ${ResetColor}" ;
+					echo -n "${Green}mettre un chiffre entre 2 et 6 please ! ${ResetColor}" ;
 			fi
 fi
 
