@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# set -x
 ####PERRUDO SRV####
 
 #### Initialisation des variables ####
@@ -43,8 +43,8 @@ function intro () {
 	${line} 1 20
 	echo -e "${Green}#         Bienvenue sur DUDO !!!         #${ResetColor}"
 
-	${line} 2 20
-	echo -e "${Green}#           Le POKER des dés             #${ResetColor}"
+	${line} 2 21
+	echo -e "${Green}#         `echo ${userco} "joueurs connectés"`          #${ResetColor}"
 	 
 	${line} 3 20
 	echo -e "${Blue}##########################################${ResetColor}"
@@ -54,26 +54,40 @@ function intro () {
 
 function joueurs () {
 #Defini le nombre de joueurs
-	
-${line} 4 30		
-echo -n "${Red}Combien de joueurs ? : ${ResetColor}" 
-
 while true ; do
-	
-	read -r nbjoueurs
-
+${line} 4 22
+echo -n "${Red}Nouvelle partie, combien de joueurs ? : ${ResetColor}"
+read -r nbjoueurs
 ${line} 5 25
-	echo -n "${Green}Ton choix est ${nbjoueurs}${ResetColor} "
-	
-	if [ ${nbjoueurs} -le 6 ] ; 
-	
-		then echo "${Green}C'est tout bon !${ResetColor}" ; break ; 
-${line} 6 20		
+echo -e "${Green}Ton choix est ${nbjoueurs}  ${ResetColor} " ;
+${line} 6 25
+if [ -z ${nbjoueurs} ] ;
+	then
+		echo "mettre un chiffre ! ;) " ;
+	else
+		echo "${nbjoueurs}" | grep -e '^[[:digit:]]*$' > /dev/null ;
+			if  [ $? -eq 0 ] ; 
+				then
+					if ! [ ${nbjoueurs} -gt 6 ]  ; 				
+						then  
+							if  [ ${nbjoueurs} -gt 1 ] ;
+								then 
+									if [ ${nbjoueurs} -eq ${userco} ] ;
+										then
+											echo "${Green}Impec ${ResetColor}" ;
+											break ;
+										else
+											echo "trop ou pas assez de joueurs"
+									fi		
+							fi
+					fi	
+				else
+					echo -n "${Green}mettre un chiffre entre 1 et 6 please ! ${ResetColor}" ;
+			fi
+fi
 
-		else echo -n "${Red}Trop de joueurs ! Repeat again : ${ResetColor}" ; 
-	
-	fi 
-		done 
+done 
+
 
 ${line} 7 30
 	echo "${BlueCyan}NB joueurs connectés : ${userco}${ResetColor}"
