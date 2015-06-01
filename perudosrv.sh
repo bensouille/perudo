@@ -68,19 +68,15 @@ if [ -z ${nbjoueurs} ] ;
 		echo "${nbjoueurs}" | grep -e '^[[:digit:]]*$' > /dev/null ;
 			if  [ $? -eq 0 ] ; 
 				then
-					if ! [ ${nbjoueurs} -gt 6 ]  ; 				
+					if [ ${nbjoueurs} -le 6 ] && [ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -eq ${userco} ] ; 				
 						then  
-							if  [ ${nbjoueurs} -gt 1 ] ;
-								then 
-									if [ ${nbjoueurs} -eq ${userco} ] ;
-										then
-											echo "${Green}Impec ${ResetColor}" ;
-											break ;
-										else
-											echo "trop ou pas assez de joueurs"
-									fi		
-							fi
-					fi	
+							echo "${Green}Impec ${ResetColor}" 
+							break 
+						else
+							echo "Trop ou pas assez de joueurs" 
+											
+					fi
+						
 				else
 					echo -n "${Green}mettre un chiffre entre 2 et 6 please ! ${ResetColor}" ;
 			fi
