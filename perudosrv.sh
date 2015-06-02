@@ -68,13 +68,29 @@ ${line} 5 22
  				echo "${Red}Un chiffre${ResetColor}" && joueurs ; 
  		fi
 ${line} 5 22
-	[ ${nbjoueurs} -gt 6 ] && echo -n "${Red}Attention tu peux pas jouer à plus de 6 !!${ResetColor}" ;
+if [ ${nbjoueurs} -gt 6 ] && echo -n "${Red}Attention tu peux pas jouer à plus de 6 !!${ResetColor}" ; 
+	then joueurs ;
+fi
 ${line} 6 22	
 	[ ${nbjoueurs} -eq 1 ] && echo -n "${Red}Attention tu peux pas jouer tout seul !!${ResetColor}" ;
-	
-	[ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -ne ${userco} ] && echo -n "${Green}Trop ou pas assez de joueurs${ResetColor}" ; # en attente ou pas, un case
+${line} 5 22	
+if [ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -gt ${userco} ] ; 
+		then
+${line} 5 22		
+			echo -n "${Green}Pas assez de joueurs connectés : ${userco}" ; echo -en  "\n`who | cut -d" " -f1` ${ResetColor}"
+${line} $((6+${userco})) 22
+			echo "Que souhaitez vous faire ? : "
+			echo "1) Attendre d'autre joueur "
+			echo "2) Redefinir le nombre de joueurs "
+			echo "3) quitter le jeu " 
+		else 
+			[ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -lt ${userco} ] && echo -e "${Green}${userco} connectés, deconnectez un user ! ;) \n `who | cut -d" " -f1` ${ResetColor}" ;
 
-	[ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -eq ${userco} ] && echo -n "${Green}ok Go${ResetColor}" && break ;
+			[ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -eq ${userco} ] && echo -n "${Green}ok Go${ResetColor}" && break ;
+	fi
+	# case 
+
+	
 
 	
 done
