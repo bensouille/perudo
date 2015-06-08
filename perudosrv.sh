@@ -32,98 +32,103 @@ BlueCyan="$(tput bold ; tput setaf 6)"
 #### Fin initialisation variables ####
 
 # Fonctions
- 
+
+#INTRO
 function intro () {
-
-while true ; do
-
-clear
-
-userco=`who | wc -l`
-
-#INTRO 
+ 
 	${line} 0 20
 	echo -e "${Blue}##########################################${ResetColor}"
-	 
 	${line} 1 20
 	echo -e "${Green}#         Bienvenue sur DUDO !!!         #${ResetColor}"
-
 	${line} 2 21
-	echo -e "${Green}#         `echo ${userco} "joueurs connectés"`          #${ResetColor}"
-	 
+	echo -e "${Green}#         `echo ${userco} "joueurs connectés"`          #${ResetColor}"	 
 	${line} 3 20
 	echo -e "${Blue}##########################################${ResetColor}"
+}
 
-#1er read demande joueurs
-	${line} 4 22
-	echo -n "${Red}mettre un chiffre entre 2 et 6 please ! ${ResetColor}" &&
-	read -r nbjoueurs ; 
-
-#Verif si vide et num	
+#Verif si vide et num 
+function verifnullnum () {
 	[ -z ${nbjoueurs} ] || [ ${nbjoueurs} = "" ] && 
-	intro
-		${line} 6 22
+	joueurs
+	${line} 6 22
 	echo "${nbjoueurs}" | grep -e '^[[:digit:]]*$'  > /dev/null ;
- 		if ! [ $? -eq 0 ] ; 
- 			then
- 				echo "${Red}Un chiffre${ResetColor}" &&
- 				sleep 2 && 
- 				intro
- 		fi
+ 	if ! [ $? -eq 0 ] ; then 				
+ 		echo "${Red}Un chiffre${ResetColor}" && 				
+ 		sleep 2 &&  			
+ 		joueurs
+ 	fi
+}
 
-#Verif si plus de 6 joueurs
+#Verif si plus de 6 joueurs et verif si egal à 1
+function verifsup6eq1 () {
 	${line} 6 22
 	if [ ${nbjoueurs} -gt 6 ] && echo -n "${Red}Attention tu peux pas jouer à plus de 6 !!${ResetColor}" && sleep 2
-		then intro 
+		then joueurs 
 	fi
+		${line} 6 22	
+		[ ${nbjoueurs} -eq 1 ] && echo -n "${Red}Attention tu peux pas jouer tout seul !!${ResetColor}" && sleep 2
+	}
 
-#Verif si egal à 1
-	${line} 6 22	
-	[ ${nbjoueurs} -eq 1 ] && echo -n "${Red}Attention tu peux pas jouer tout seul !!${ResetColor}" && sleep 2
-
-#Verif si sup à 1 et sup à userco	
+#Verif si sup à 1 et sup à userco
+function verifsup1userco () {
 	if [ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -gt ${userco} ] ; then
-	${line} 6 0	
-	echo "${Green}${userco} joueurs connectés seulement : "  
-	echo -e "`who | cut -d" " -f1` ${ResetColor}" 
-	${line} $((7+${userco})) 0
-	echo "${Green}Que souhaitez vous faire ? : ${ResetColor}"
-	echo "${Green}1) Attendre d'autre joueur ${ResetColor}"
-	echo "${Green}2) Redefinir le nombre de joueurs ${ResetColor}"
-	echo "${Green}3) quitter le jeu ${ResetColor}" 
-	${line} $((11+${userco})) 0
-	read -p "${Green}votre choix : ${ResetColor}" option
-	case "${option}" in
-		1) attente ;;
-		2) intro ;;
-		3) exit ;;
-		*) echo "1, 2 ou 3 ! merci !" ;;
-	esac
-
-	
-
+		${line} 6 0	
+		echo "${Green}${userco} joueurs connectés seulement : "  
+		echo -e "`who | cut -d" " -f1` ${ResetColor}" 
+		${line} $((7+${userco})) 0
+		echo "${Green}Que souhaitez vous faire ? : ${ResetColor}"
+		echo "${Green}1) Attendre d'autre joueur ${ResetColor}"
+		echo "${Green}2) Redefinir le nombre de joueurs ${ResetColor}"
+		echo "${Green}3) quitter le jeu ${ResetColor}" 
+		${line} $((11+${userco})) 0
+		read -p "${Green}votre choix : ${ResetColor}" choix1
+			case "${choix1}" in
+				1) attente ;;
+				2) joueurs ;;
+				3) exit ;;
+				*) echo "1, 2 ou 3 ! merci !" ;;
+			esac
 	else 
-	[ ${nbjoueurs} -gt 1 ] && 
-	[ ${nbjoueurs} -lt ${userco} ] && 
-	echo -e "${Green}${userco} joueurs connectés, deconnectez un user ! ;) \n`who | cut -d" " -f1` ${ResetColor}" &&
-	sleep 3
-
-	[ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -eq ${userco} ] && 
-	echo -n "${Green}ok Go${ResetColor}" && 
-	break 
+		[ ${nbjoueurs} -gt 1 ] && 
+		[ ${nbjoueurs} -lt ${userco} ] && 
+		echo -e "${Green}${userco} joueurs connectés ;) \n`who | cut -d" " -f1` ${ResetColor}" &&
+		echo "Que souhaitez vous faire ? "
+		echo "${Green}1) Deco un user${ResetColor}"
+		echo "${Green}2) Redefinir le nombre de joueurs ${ResetColor}"
+		echo "${Green}3) quitter le jeu ${ResetColor}" 
+		read -p "${Green}votre choix : ${ResetColor}" choix2
+			case "${choix2}" in
+				case "${choix2}" in
+				1)  ;;
+				2) joueurs ;;
+				3) exit ;;
+				*) echo "1, 2 ou 3 ! merci !" ;;
+			esac
+		
+		[ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -eq ${userco} ] && 
+		echo -n "${Green}ok Go${ResetColor}" && 
+		break 
 	fi
-		# case 
+}
 
-
-
-done
-
+function joueurs () {
+	while true ; do
+	clear
+	userco=`who | wc -l`
+	intro
+	#1er read demande joueurs
+		${line} 4 22
+		echo -n "${Red}mettre un chiffre entre 2 et 6 please ! ${ResetColor}" &&
+		read -r nbjoueurs ; 
+	verifnullnum
+	verifsup6eq1
+	verifsup1userco
+	done
 #Sortie de boucle, affichage de NB joueurs co et select 
 	${line} 7 30
 	echo "${BlueCyan}NB joueurs connectés : ${userco}${ResetColor}"
 	${line} 8 30
 	echo "${BlueCyan}NB joueurs selectionné : ${nbjoueurs}${ResetColor}"
-
 }
 
 
@@ -181,12 +186,11 @@ done
 # }
 
 function attente () {
-
-  printf "Attente."
+  echo -n "Attente."
   while true ; do
   	userco=`who | wc -l`
 	if ! [ ${userco} -eq ${nbjoueurs} ] ; then
-    printf "."
+    echo -n "."
     sleep 1
 	else
 		clear
@@ -206,7 +210,7 @@ $HOME/perudo/perudoclt.sh
 
 #Code
 
-intro
+joueurs
 
 $HOME/perudo/perudoclt.sh
 
