@@ -5,7 +5,7 @@
 #### Initialisation des variables ####
 #nombre d'utilisateurs connectés
 # userco=`who | wc -l`
-
+nomjoueur=`who | grep -e pts/0 | cut -d" " -f1`
 #numerotation des lignes
 line='tput cup'
 
@@ -74,7 +74,7 @@ function verifsup1userco () {
 	if [ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -gt ${userco} ] ; then
 		${line} 6 0	
 		echo "${Green}${userco} joueurs connectés seulement : "  
-		echo -e "`who | cut -d" " -f1` ${ResetColor}" 
+		echo "{Green}`who | cut -d" " -f1` ${ResetColor}" 
 		${line} $((7+${userco})) 0
 		echo "${Green}Que souhaitez vous faire ? : ${ResetColor}"
 		echo "${Green}1) Attendre d'autre joueur ${ResetColor}"
@@ -92,25 +92,30 @@ function verifsup1userco () {
 		[ ${nbjoueurs} -gt 1 ] && 
 		[ ${nbjoueurs} -lt ${userco} ] && 
 		echo -e "${Green}${userco} joueurs connectés ;) \n`who | cut -d" " -f1` ${ResetColor}" &&
-		echo "Que souhaitez vous faire ? "
-		echo "${Green}1) Deco un user${ResetColor}"
-		echo "${Green}2) Redefinir le nombre de joueurs ${ResetColor}"
-		echo "${Green}3) quitter le jeu ${ResetColor}" 
-		read -p "${Green}votre choix : ${ResetColor}" choix2
+		echo "Que souhaitez vous faire ? " &&
+		echo "${Green}1) Deco un user${ResetColor}" &&
+		echo "${Green}2) Redefinir le nombre de joueurs ${ResetColor}" &&
+		echo "${Green}3) quitter le jeu ${ResetColor}" &&
+		read -p "${Green}votre choix : ${ResetColor}" choix2 &&
 			case "${choix2}" in
-				case "${choix2}" in
-				1)  ;;
+				1) decojoueur ;;
 				2) joueurs ;;
 				3) exit ;;
 				*) echo "1, 2 ou 3 ! merci !" ;;
 			esac
-		
+		${line} 6 36
 		[ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -eq ${userco} ] && 
-		echo -n "${Green}ok Go${ResetColor}" && 
+		echo -n "${Green}OK GO !!!!!${ResetColor}" && 
 		break 
 	fi
 }
 
+function decojoueur () {
+echo `who | cut -d" " -f1`
+read -p "${Green}nom du joueur à deconnecter : ${ResetColor}" nompts
+`sudo pkill -KILL -u ${nompts}`
+}
+	
 function joueurs () {
 	while true ; do
 	clear
@@ -125,65 +130,11 @@ function joueurs () {
 	verifsup1userco
 	done
 #Sortie de boucle, affichage de NB joueurs co et select 
-	${line} 7 30
+	${line} 7 28
 	echo "${BlueCyan}NB joueurs connectés : ${userco}${ResetColor}"
-	${line} 8 30
+	${line} 8 28
 	echo "${BlueCyan}NB joueurs selectionné : ${nbjoueurs}${ResetColor}"
 }
-
-
-##################### 1ere version fonction joueurs######################
-#########################################################################
-# #Defini le nombre de joueurs											#
-# while true ; do 														#
-# ${line} 4 22 															#
-# echo -n "${Red}Nouvelle partie, combien de joueurs ? : ${ResetColor}" #
-# read -r nbjoueurs														#
-# ${line} 5 25															#																			
-# echo -e "${Green}Ton choix est ${nbjoueurs}${ResetColor} " ;			#														
-# ${line} 6 25															#		
-# if [ -z ${nbjoueurs} ] ;
-	# then
-		# echo "mettre un chiffre ! ;) " ;
-	# else
-		# echo "${nbjoueurs}" | grep -e '^[[:digit:]]*$' > /dev/null ;
-			# if  [ $? -eq 0 ] ; 
-				# then
-					# if [ ${nbjoueurs} -le 6 ] && [ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -eq ${userco} ] ; 				
-						# then  
-							# echo "${Green}Impec ${ResetColor}" 
-							# break 
-							# if ! [ ${nbjoueurs} -ge 6 ] ;
-								# then 
-									# ${line} 6 25
-									# echo "${Blue}En attente des joueurs !${ResetColor}" 
-							# fi			
-					# fi
-						
-				# else
-					# echo -n "${Green}mettre un chiffre entre 2 et 6 please ! ${ResetColor}" ;
-			#  											  #						
-# fi																	#
-# done 																	#
-#########################################################################
-
-# function attente () {
-# # Attente des joueurs
-# 	clear
-# 	while true ; do 
-# 	userco=`who | wc -l`
-# 	${line} 1 30
-# 	if [ ${userco} -eq ${nbjoueurs} ] ; 
-# 		then break ;
-# 		else echo -e "${BlueCyan}En attente des joueurs...${ResetColor}" ;
-# 			for a in 5 4 3 2 1 0
-# 				do
-# 					${line} 2 30
-# 					echo "${a}"
-# 				done
-# 	fi
-# 	done
-# }
 
 function attente () {
   echo -n "Attente."
@@ -203,10 +154,6 @@ echo "${Green}lancement de la partie !${ResetColor}"
 $HOME/perudo/perudoclt.sh
 
 }
-
-	
-
-
 
 #Code
 
