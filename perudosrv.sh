@@ -74,13 +74,14 @@ function verifsup1userco () {
 	if [ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -gt ${userco} ] ; then
 		${line} 6 0	
 		echo "${Green}${userco} joueurs connectés seulement : "  
-		echo "{Green}`who | cut -d" " -f1` ${ResetColor}" 
-		${line} $((7+${userco})) 0
+		${line} 8 0	
+		echo "${Green}`who | cut -d" " -f1` ${ResetColor}" 
+		${line} $((9+${userco})) 0
 		echo "${Green}Que souhaitez vous faire ? : ${ResetColor}"
 		echo "${Green}1) Attendre d'autre joueur ${ResetColor}"
 		echo "${Green}2) Redefinir le nombre de joueurs ${ResetColor}"
 		echo "${Green}3) quitter le jeu ${ResetColor}" 
-		${line} $((11+${userco})) 0
+		${line} $((14+${userco})) 0
 		read -p "${Green}votre choix : ${ResetColor}" choix1
 			case "${choix1}" in
 				1) attente ;;
@@ -105,6 +106,8 @@ function verifsup1userco () {
 			esac
 		${line} 6 36
 		[ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -eq ${userco} ] && 
+		clear &&
+		${line} 4 36
 		echo -n "${Green}OK GO !!!!!${ResetColor}" && 
 		break 
 	fi
@@ -130,9 +133,9 @@ function joueurs () {
 	verifsup1userco
 	done
 #Sortie de boucle, affichage de NB joueurs co et select 
-	${line} 7 28
+	${line} 1 28
 	echo "${BlueCyan}NB joueurs connectés : ${userco}${ResetColor}"
-	${line} 8 28
+	${line} 2 28
 	echo "${BlueCyan}NB joueurs selectionné : ${nbjoueurs}${ResetColor}"
 }
 
