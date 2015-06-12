@@ -152,6 +152,8 @@ function attente () {
 	fi
   done
 
+rm /tmp/perudo/tour
+
 echo "${Green}lancement de la partie !${ResetColor}"
 
 

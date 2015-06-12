@@ -1,10 +1,12 @@
 #!/bin/bash
-
+# set -x
 ####PERRUDO !!!####
 
 #Variables globales du jeu
 JOUEUR=`whoami`
 i=0
+tour=/tmp/perudo/tour
+numtour=1
 DES1=$((RANDOM%6+1))
 DES2=$((RANDOM%6+1))
 DES3=$((RANDOM%6+1))
@@ -43,6 +45,7 @@ echo -e "${Red}  Bonjour `whoami`, voici ton premier lancé  ${ResetColor}"
 }
 
 function lance () {
+clear
 #Affiche le premier lancé de dés
 tput cup 7 20
 echo -e "${Blue}         #####################${ResetColor}"
@@ -107,6 +110,11 @@ fi)
 
 }
 
+# function veriftour () {
+# if 
+
+# }
+
 
 function premier () {
 #Premiere annonce du premier joueur
@@ -118,27 +126,50 @@ tput cup 14 0
 echo "${Red}ATTENTION !!! Au premier tour tu n'as pas le droit d'utiliser les DUDO !!!${ResetColor}"
 tput cup 16 0
 
-while read -p "${Green}Ton choix : ${ResetColor}" option1; do
-	echo -n "${Red}Ton choix est${ResetColor} "
-echo "${option1}" | grep -e '^[[:digit:]]*D[[:digit:]]$' > /dev/null || 
-echo "${option1}" | grep -e '^[[:digit:]]*d[[:digit:]]$' > /dev/null || 
-echo "${option1}" | grep -e '^[[:digit:]]*[[:digit:]]$' > /dev/null || 
-echo "${option1}" | grep -e '^[[:digit:]]*\.[[:digit:]]$' > /dev/null
+if [ -a /tmp/perudo/tour ] ; then
+	cat < ${tour}
+else
+	while read -p "${Green}Ton choix : ${ResetColor}" option1; do
+		echo -n "${Red}Ton choix est${ResetColor} "
+	echo "${option1}" | grep -e '^[[:digit:]]*D[[:digit:]]$' > /dev/null || 
+	echo "${option1}" | grep -e '^[[:digit:]]*d[[:digit:]]$' > /dev/null || 
+	echo "${option1}" | grep -e '^[[:digit:]]*[[:digit:]]$' > /dev/null || 
+	echo "${option1}" | grep -e '^[[:digit:]]*\.[[:digit:]]$' > /dev/null
 
-if [ $? -eq 0 ] ; then echo "${Green}OK${ResetColor}" ; break
- else echo -n "${Red}mauvais, attention à la syntaxe ! Repeat again : ${ResetColor}" ; 
-fi 
-	echo "tu n'est pas assez rapide !"
-		done 
+		if [ $? -eq 0 ] ; then 
+			echo "${Green}OK${ResetColor}" && break
+ 		else 
+	 		echo -n "${Red}mauvais, attention à la syntaxe ! Repeat again : ${ResetColor}" ; 
+		fi
+		 
+	done
+fi
+}
+
+function tourpartour () {
+#definition variable i
+i=0
+#boucle de tour
+while true ; do
+if ! [ -d /tmp/perudo ] ; then
+		mkdir /tmp/perudo
+			if ! [ -a /tmp/perudo/tour ] ; then
+				mkfifo /tmp/perudo/tour
+				echo "tour N°$((${i}+1)) de `whoami`, il propose ${option1} en attente du joueur suivant" > ${tour} ;
+			fi
+	else
+		cat < ${tour}
+		
+
+fi
+done
+
+
 
 
 }
 
-
-
-
 #Code
-
 
 
 lance
@@ -148,6 +179,8 @@ nomjoueur
 tableau
 
 premier
+
+tourpartour
 
 
 
