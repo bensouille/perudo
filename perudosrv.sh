@@ -84,7 +84,7 @@ function verifsup1userco () {
 		${line} $((14+${userco})) 0
 		read -p "${Green}votre choix : ${ResetColor}" choix1
 			case "${choix1}" in
-				1) attente ;;
+				1) attente && break ;;
 				2) joueurs ;;
 				3) exit ;;
 				*) echo "1, 2 ou 3 ! merci !" ;;
@@ -154,7 +154,7 @@ function attente () {
 
 echo "${Green}lancement de la partie !${ResetColor}"
 
-$HOME/perudo/perudoclt.sh
+
 
 }
 
