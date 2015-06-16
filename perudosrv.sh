@@ -107,8 +107,8 @@ function verifsup1userco () {
 		${line} 6 36
 		[ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -eq ${userco} ] && 
 		clear &&
-		${line} 4 36
-		echo -n "${Green}OK GO !!!!!${ResetColor}" && 
+		${line} 4 28
+		echo -n "${Green}Initialisation la partie !${ResetColor}" && 
 		break 
 	fi
 }
@@ -122,7 +122,7 @@ read -p "${Green}nom du joueur à deconnecter : ${ResetColor}" nompts
 function joueurs () {
 	while true ; do
 	clear
-	userco=`who | wc -l`
+	userco=`who | cut -d" " -f1 | sort -u | wc -l`
 	intro
 	#1er read demande joueurs
 		${line} 4 22
@@ -139,7 +139,9 @@ function joueurs () {
 	echo "${BlueCyan}NB joueurs selectionné : ${nbjoueurs}${ResetColor}"
 }
 
+#Attente de connexion des joueurs
 function attente () {
+  ${line} 3 28
   echo -n "Attente."
   while true ; do
   	userco=`who | wc -l`
@@ -151,20 +153,55 @@ function attente () {
 		break
 	fi
   done
-
 rm /tmp/perudo/tour
-
-echo "${Green}lancement de la partie !${ResetColor}"
-
-
-
+${line} 3 22
+echo "${Green}Initialisation la partie !${ResetColor}"
 }
+
+#Verifie si tous les joueurs ont bien lancé le jeu
+function launchgame () {
+#nb d'user connectés 
+userco=`who | cut -d" " -f1 | sort -u | wc -l`
+#nb de script perudoclt lancé
+psperu=`ps aux | grep perudoclt | cut -d" " -f1 | sort -u | wc -l`
+
+${line} 4 28
+[ ${psperu} -eq ${userco} ] && 
+echo "${Green}Tous les Joueurs sont operationnels${ResetColor}" &&
+sleep 1 &&
+echo "${Green}Definition du premier joueur à commencer ${ResetColor}" 
+sleep 1
+${line} 5 28
+[ ${psperu} -ne ${userco} ] && 
+echo "${Red}En attentes des autres joueurs.${ResetColor}" && 
+while true ; do
+sleep 1
+#nb d'user connectés
+userco=`who | cut -d" " -f1 | sort -u | wc -l`
+#nb de script perudoclt lancé
+psperu=`ps aux | grep perudoclt | cut -d" " -f1 | sort -u | wc -l`
+  	if ! [ ${psperu} -eq ${userco} ] ; then
+    	echo -n "${Red}.${ResetColor}"
+    	sleep 1
+	else
+		clear
+		echo "${Green}Tous les Joueurs sont operationnels${ResetColor}" 
+		sleep 1 
+		echo "${Green}Definition du premier joueur à commencer ${ResetColor}"
+		sleep 1
+		break
+	fi
+  done
+}
+
 
 #Code
 
 joueurs
 
-$HOME/perudo/perudoclt.sh
+launchgame
+
+# $HOME/perudo/perudocheck.sh
 
 
 

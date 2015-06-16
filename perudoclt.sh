@@ -4,9 +4,6 @@
 
 #Variables globales du jeu
 JOUEUR=`whoami`
-i=0
-tour=/tmp/perudo/tour
-numtour=1
 DES1=$((RANDOM%6+1))
 DES2=$((RANDOM%6+1))
 DES3=$((RANDOM%6+1))
@@ -39,92 +36,42 @@ BlueCyan="$(tput bold ; tput setaf 6)"
 
 
 function nomjoueur () {
-#
-tput cup 6 20
-echo -e "${Red}  Bonjour `whoami`, voici ton premier lancé  ${ResetColor}"
+#Affiche le nom du joueur
+tput cup 3 31
+echo -e "${Red}  Bonjour ${JOUEUR} ${ResetColor}"
 }
 
 function lance () {
-clear
 #Affiche le premier lancé de dés
-tput cup 7 20
+tput cup 4 20
 echo -e "${Blue}         #####################${ResetColor}"
  
-tput cup 8 20
-echo -e "${Red}         #       ${JOUEUR}       #${ResetColor}"
+tput cup 5 20
+echo -e "${Red}         #       Tour n°x      #${ResetColor}"
 
-tput cup 9 20
+tput cup 6 20
 echo -e "${Green}         #`tput bold`[`if [ ${DES1} = 1 ] ; then echo @ ; else echo ${DES1} ; fi`] [`if [ ${DES2} = 1 ] ; then echo @ ; else echo ${DES2} ; fi`] [`if [ ${DES3} = 1 ] ; then echo @ ; else echo ${DES3} ; fi`] [`if [ ${DES4} = 1 ] ; then echo @ ; else echo ${DES4} ; fi`] [`if [ ${DES5} = 1 ] ; then echo @ ; else echo ${DES5} ; fi`]#${ResetColor}"
  
-tput cup 10 20
+tput cup 7 20
 echo -e "${Blue}         #####################${ResetColor}"
-
-i=$((i+1))
 }
 
-function tableau () {
-#envoie les valeurs des dés dans un fichier tableau
-			 $(if [ ${i} -le 1 ] ; 
-				then echo "`if [ ${DES1} = 1 ] ; 
-								then echo @ ; 
-								else echo ${DES1} ; 
-										fi` 
-							`if [ ${DES2} = 1 ] ; 
-								then echo @ ; 
-								else echo ${DES2} ; 
-										fi` 
-							`if [ ${DES3} = 1 ] ;
-								then echo @ ; 
-								else echo ${DES3} ; 
-										fi` 
-							`if [ ${DES4} = 1 ] ; 
-								then echo @ ; 
-								else echo ${DES4} ;
-								fi` 
-							`if [ ${DES5} = 1 ] ; 
-								then echo @ ; 
-								else echo ${DES5} ; 
-								fi`" > tableau_`whoami`_${i} ;
 
-				else echo "`if [ ${DES1} = 1 ] ; 
-								then echo @ ; 
-								else echo ${DES1} ;
-								fi` 
-							`if [ ${DES2} = 1 ] ; 
-								then echo @ ; 
-								else echo ${DES2} ;
-								fi` 
-							`if [ ${DES3} = 1 ] ; 
-								then echo @ ; 
-								else echo ${DES3} ; 
-								fi` 
-							`if [ ${DES4} = 1 ] ; 
-								then echo @ ; 
-								else echo ${DES4} ; 
-								fi` 
-							`if [ ${DES5} = 1 ] ; 
-								then echo @ ; 
-								else echo ${DES5} ;
-								fi`" >> tableau_`whoami`_${i} ;
-fi)
-
-}
 
 # function veriftour () {
 # if 
 
 # }
 
-
 function premier () {
 #Premiere annonce du premier joueur
-tput cup 11 27
+tput cup 8 27
 echo "${Green}Que souhaites-tu annoncer ?${ResetColor}"
-tput cup 12 23
+tput cup 9 23
 echo "${Green}Exemples : 2D2 ou 3d5 ou 46 ou 6.4${ResetColor}"
-tput cup 14 0
+tput cup 10 0
 echo "${Red}ATTENTION !!! Au premier tour tu n'as pas le droit d'utiliser les DUDO !!!${ResetColor}"
-tput cup 16 0
+tput cup 11 0
 
 if [ -a /tmp/perudo/tour ] ; then
 	cat < ${tour}
@@ -146,37 +93,12 @@ else
 fi
 }
 
-function tourpartour () {
-#definition variable i
-i=0
-#boucle de tour
-while true ; do
-if ! [ -d /tmp/perudo ] ; then
-		mkdir /tmp/perudo
-			if ! [ -a /tmp/perudo/tour ] ; then
-				mkfifo /tmp/perudo/tour
-				echo "tour N°$((${i}+1)) de `whoami`, il propose ${option1} en attente du joueur suivant" > ${tour} ;
-			fi
-	else
-		cat < ${tour}
-		
-
-fi
-done
-
-
-
-
-}
 
 #Code
 
-
-lance
-
 nomjoueur
 
-tableau
+lance
 
 premier
 
