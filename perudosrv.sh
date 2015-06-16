@@ -92,7 +92,7 @@ function verifsup1userco () {
 	else 
 		[ ${nbjoueurs} -gt 1 ] && 
 		[ ${nbjoueurs} -lt ${userco} ] && 
-		echo -e "${Green}${userco} joueurs connectés ;) \n`who | cut -d" " -f1` ${ResetColor}" &&
+		echo -e "${Green}${userco} joueurs connectés ;) \n`who | cut -d" " -f1 | sort -u` ${ResetColor}" &&
 		echo "Que souhaitez vous faire ? " &&
 		echo "${Green}1) Deco un user${ResetColor}" &&
 		echo "${Green}2) Redefinir le nombre de joueurs ${ResetColor}" &&
@@ -114,9 +114,10 @@ function verifsup1userco () {
 }
 
 function decojoueur () {
-echo `who | cut -d" " -f1`
+echo `who | cut -d" " -f1 | sort -u`
 read -p "${Green}nom du joueur à deconnecter : ${ResetColor}" nompts
 `sudo pkill -KILL -u ${nompts}`
+joueurs
 }
 	
 function joueurs () {
