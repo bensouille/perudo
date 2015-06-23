@@ -50,7 +50,7 @@ function intro () {
 function verifnullnum () {
 	[ -z ${nbjoueurs} ] || [ ${nbjoueurs} = "" ] && 
 	joueurs
-	${line} 6 22
+	 ${line} 6 22
 	echo "${nbjoueurs}" | grep -e '^[[:digit:]]*$'  > /dev/null ;
  	if ! [ $? -eq 0 ] ; then 				
  		echo "${Red}Un chiffre${ResetColor}" && 				
@@ -107,7 +107,7 @@ function verifsup1userco () {
 		${line} 6 36
 		[ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -eq ${userco} ] && 
 		clear &&
-		${line} 4 28
+		${line} 4 28 &&
 		echo -n "${Green}Initialisation la partie !${ResetColor}" && 
 		break 
 	fi
@@ -124,6 +124,7 @@ function joueurs () {
 	while true ; do
 	clear
 	userco=`who | cut -d" " -f1 | sort -u | wc -l`
+	userco=$((${userco}-1))
 	intro
 	#1er read demande joueurs
 		${line} 4 22
@@ -142,7 +143,7 @@ function joueurs () {
 
 #Attente de connexion des joueurs
 function attente () {
-  ${line} 3 28
+${line} 3 28
   echo -n "Attente."
   while true ; do
   	userco=`who | wc -l`
@@ -156,7 +157,7 @@ function attente () {
   done
 rm /tmp/perudo/tour
 ${line} 3 22
-echo "${Green}Initialisation la partie !${ResetColor}"
+	echo "${Green}Initialisation la partie !${ResetColor}"
 }
 
 #Verifie si tous les joueurs ont bien lancé le jeu
@@ -167,14 +168,14 @@ userco=`who | cut -d" " -f1 | sort -u | wc -l`
 psperu=`ps aux | grep perudoclt | cut -d" " -f1 | sort -u | wc -l`
 
 ${line} 4 28
-[ ${psperu} -eq ${userco} ] && 
-echo "${Green}Tous les Joueurs sont operationnels${ResetColor}" &&
-sleep 1 &&
-echo "${Green}Definition du premier joueur à commencer ${ResetColor}" 
-sleep 1
-${line} 5 28
-[ ${psperu} -ne ${userco} ] && 
-echo "${Red}En attentes des autres joueurs.${ResetColor}" && 
+	[ ${psperu} -eq ${userco} ] && 
+		echo "${Green}Tous les Joueurs sont operationnels${ResetColor}" &&
+		sleep 1 &&
+		echo "${Green}Definition du premier joueur à commencer ${ResetColor}" 
+		sleep 1
+${line} 5 282
+	[ ${psperu} -ne ${userco} ] && 
+		echo "${Red}En attentes des autres joueurs.${ResetColor}" && 
 while true ; do
 sleep 1
 #nb d'user connectés
@@ -196,11 +197,23 @@ psperu=`ps aux | grep perudoclt | cut -d" " -f1 | sort -u | wc -l`
 }
 
 
+function firstplayer () {
+	echo "Qui sera le premier joueur ?"
+	echo ${userco}
+	a=0
+	for i in  `who | cut -d" " -f1 | sort -u` ; do
+		tableau[${a}]="${i}"
+		a=$(($a+1))
+	done
+
+
+}
+
 #Code
 
 joueurs
 
-launchgame
+
 
 # $HOME/perudo/perudocheck.sh
 
