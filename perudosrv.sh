@@ -123,8 +123,7 @@ joueurs
 function joueurs () {
 	while true ; do
 	clear
-	userco=`who | cut -d" " -f1 | sort -u | wc -l`
-	userco=$((${userco}-1))
+	userco=`top -n1 -b | grep perudoclt | cut -d" " -f1 | sort -u | wc -l`
 	intro
 	#1er read demande joueurs
 		${line} 4 22
@@ -143,14 +142,17 @@ function joueurs () {
 
 #Attente de connexion des joueurs
 function attente () {
-${line} 3 28
+
+clear
+${line} 5 28
   echo -n "Attente."
   while true ; do
-  	userco=`who | wc -l`
+   	userco=`top -n1 -b | grep perudoclt | cut -d" " -f1 | sort -u | wc -l`
 	if ! [ ${userco} -eq ${nbjoueurs} ] ; then
-    echo -n "."
+    ${line} 6 28
+    echo -n "${userco} joueur(s) connecté(s)." 
     sleep 1
-	else
+    else
 		clear
 		break
 	fi
@@ -163,9 +165,9 @@ ${line} 3 22
 #Verifie si tous les joueurs ont bien lancé le jeu
 function launchgame () {
 #nb d'user connectés 
-userco=`who | cut -d" " -f1 | sort -u | wc -l`
+userco=`top -n1 -b | grep perudoclt | cut -d" " -f1 | sort -u | wc -l`
 #nb de script perudoclt lancé
-psperu=`ps aux | grep perudoclt | cut -d" " -f1 | sort -u | wc -l`
+psperu=`top -n1 -b | grep perudoclt | cut -d" " -f1 | sort -u | wc -l`
 
 ${line} 4 28
 	[ ${psperu} -eq ${userco} ] && 
