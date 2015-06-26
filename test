@@ -1,7 +1,0 @@
-a=0
-	for i in  `who | cut -d" " -f1 | sort -u` ; do
-		tableau[${a}]=${i}
-		a=$(($a+1))
-	done
-
-echo ${tableau[2]}

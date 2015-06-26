@@ -5,7 +5,7 @@
 #### Initialisation des variables ####
 #nombre d'utilisateurs connectés
 # userco=`who | wc -l`
-nomjoueur=`who | grep -e pts/0 | cut -d" " -f1`
+nomjoueur=`whoami`
 #numerotation des lignes
 line='tput cup'
 
@@ -32,6 +32,22 @@ BlueCyan="$(tput bold ; tput setaf 6)"
 #### Fin initialisation variables ####
 
 # Fonctions
+
+function joueurs () {
+	while true ; do
+	clear
+	userco=`top -n1 -b | grep perudoclt.sh | sort -u | wc -l`
+	intro
+	#1er read demande joueurs
+		${line} 4 22
+		echo -n "${Red}mettre un chiffre entre 2 et 6 please ! ${ResetColor}" &&
+		read -r nbjoueurs ; 
+	verifnullnum
+	verifsup6eq1
+	verifsup1userco
+	done	
+}
+
 
 #INTRO
 function intro () {
@@ -73,10 +89,10 @@ function verifsup6eq1 () {
 function verifsup1userco () {
 	if [ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -gt ${userco} ] ; then
 		${line} 6 0	
-		echo "${Green}${userco} joueurs connectés seulement : "  
-		${line} 8 0	
-		echo "${Green}`who | cut -d" " -f1` ${ResetColor}" 
-		${line} $((9+${userco})) 0
+		echo "${Green}${userco} joueurs connectés : "  
+		${line} 7 0	
+		echo "${Green}`top -n1 -b | grep perudoclt.sh | cut -d" " -f5 | sort -u` ${ResetColor}" 
+		${line} $((8+${userco})) 0
 		echo "${Green}Que souhaitez vous faire ? : ${ResetColor}"
 		echo "${Green}1) Attendre d'autre joueur ${ResetColor}"
 		echo "${Green}2) Redefinir le nombre de joueurs ${ResetColor}"
@@ -120,95 +136,62 @@ read -p "${Green}nom du joueur à deconnecter : ${ResetColor}" nompts
 joueurs
 }
 	
-function joueurs () {
-	while true ; do
-	clear
-	userco=`top -n1 -b | grep perudoclt | cut -d" " -f1 | sort -u | wc -l`
-	intro
-	#1er read demande joueurs
-		${line} 4 22
-		echo -n "${Red}mettre un chiffre entre 2 et 6 please ! ${ResetColor}" &&
-		read -r nbjoueurs ; 
-	verifnullnum
-	verifsup6eq1
-	verifsup1userco
-	done
-#Sortie de boucle, affichage de NB joueurs co et select 
-	${line} 1 28
-	echo "${BlueCyan}NB joueurs connectés : ${userco}${ResetColor}"
-	${line} 2 28
-	echo "${BlueCyan}NB joueurs selectionné : ${nbjoueurs}${ResetColor}"
-}
-
 #Attente de connexion des joueurs
 function attente () {
-
 clear
-${line} 5 28
-  echo -n "Attente."
-  while true ; do
-   	userco=`top -n1 -b | grep perudoclt | cut -d" " -f1 | sort -u | wc -l`
-	if ! [ ${userco} -eq ${nbjoueurs} ] ; then
-    ${line} 6 28
-    echo -n "${userco} joueur(s) connecté(s)." 
-    sleep 1
-    else
-		clear
-		break
-	fi
-  done
-rm /tmp/perudo/tour
-${line} 3 22
-	echo "${Green}Initialisation la partie !${ResetColor}"
+while [ ${userco} -ne ${nbjoueurs} ] ; do
+${line} 5 20
+	echo -n "${userco} joueur(s) connecté(s) ! On attend sagement, merci |" 
+	sleep 0.1  
+${line} 5 20
+	echo -n "${userco} joueur(s) connecté(s) ! On attend sagement, merci /"
+	sleep 0.1 
+${line} 5 20
+	echo -n "${userco} joueur(s) connecté(s) ! On attend sagement, merci -"
+	sleep 0.1 
+${line} 5 20
+	echo -n "${userco} joueur(s) connecté(s) ! On attend sagement, merci |"
+	sleep 0.1 
+${line} 5 20
+	echo -n "${userco} joueur(s) connecté(s) ! On attend sagement, merci -"
+	sleep 0.1 
+${line} 5 20
+	echo -n "${userco} joueur(s) connecté(s) ! On attend sagement, merci \\"   
+	sleep 0.1 
+userco=`top -n1 -b | grep perudoclt | sort -u | wc -l`
+done
+${line} 6 28
+echo "${Green}Initialisation la partie !${ResetColor}"
+launchgame
 }
 
-#Verifie si tous les joueurs ont bien lancé le jeu
+#Annonce debut de partie et place les joueurs dans un tableau, nom et PID
 function launchgame () {
-#nb d'user connectés 
-userco=`top -n1 -b | grep perudoclt | cut -d" " -f1 | sort -u | wc -l`
-#nb de script perudoclt lancé
-psperu=`top -n1 -b | grep perudoclt | cut -d" " -f1 | sort -u | wc -l`
-
-${line} 4 28
-	[ ${psperu} -eq ${userco} ] && 
+${line} 7 28
+	echo "${BlueCyan}NB joueurs connectés : ${userco}${ResetColor}"
+${line} 8 28
+	echo "${BlueCyan}NB joueurs selectionné : ${nbjoueurs}${ResetColor}"
+${line} 8 28
 		echo "${Green}Tous les Joueurs sont operationnels${ResetColor}" &&
 		sleep 1 &&
 		echo "${Green}Definition du premier joueur à commencer ${ResetColor}" 
 		sleep 1
-${line} 5 282
-	[ ${psperu} -ne ${userco} ] && 
-		echo "${Red}En attentes des autres joueurs.${ResetColor}" && 
-while true ; do
-sleep 1
-#nb d'user connectés
-userco=`who | cut -d" " -f1 | sort -u | wc -l`
-#nb de script perudoclt lancé
-psperu=`ps aux | grep perudoclt | cut -d" " -f1 | sort -u | wc -l`
-  	if ! [ ${psperu} -eq ${userco} ] ; then
-    	echo -n "${Red}.${ResetColor}"
-    	sleep 1
-	else
-		clear
-		echo "${Green}Tous les Joueurs sont operationnels${ResetColor}" 
-		sleep 1 
-		echo "${Green}Definition du premier joueur à commencer ${ResetColor}"
-		sleep 1
-		break
-	fi
-  done
+a=0
+for i in `top -n1 -b | grep perudoclt.sh | awk '{ print $2 }'` ; do
+		user_nom[${a}]="${i}"
+		a=$(($a+1))
+done
+echo ${user_nom[*]} > /home/steph/perudo/users
+firstplayer
 }
+
+
 
 
 function firstplayer () {
 	echo "Qui sera le premier joueur ?"
 	echo ${userco}
 	a=0
-	for i in  `who | cut -d" " -f1 | sort -u` ; do
-		tableau[${a}]="${i}"
-		a=$(($a+1))
-	done
-
-
 }
 
 #Code

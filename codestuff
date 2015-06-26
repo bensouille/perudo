@@ -99,7 +99,9 @@ i=$(($i+1))
 fi)
 }
 
-
+${line} 5 282
+	[ ${psperu} -ne ${userco} ] && 
+		echo "${Red}En attentes des autres joueurs.${ResetColor}" && 
 
 var=score_${current_player}
 echo "${!var}"
