@@ -1,3 +1,9 @@
+#extraire une valeur d'un tableau aleatoirement
+i=$(echo $((RANDOM%)))
+echo ${users_nom[${i}]}
+
+
+
 
 
 #Defini le nombre de joueurs 1ere version											
@@ -103,5 +109,15 @@ ${line} 5 282
 	[ ${psperu} -ne ${userco} ] && 
 		echo "${Red}En attentes des autres joueurs.${ResetColor}" && 
 
+#nb d'user connectés 
+userco=`top -n1 -b | grep perudoclt | cut -d" " -f1 | sort -u | wc -l`
+#nb de script perudoclt lancé
+psperu=`top -n1 -b | grep perudoclt | cut -d" " -f1 | sort -u | wc -l`
+
+
 var=score_${current_player}
 echo "${!var}"
+
+
+
+$((RANDOM%`cat users | wc -w`+1)) 

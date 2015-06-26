@@ -35,13 +35,27 @@ BlueCyan="$(tput bold ; tput setaf 6)"
 #### Fin initialisation variables ####
 
 
-function nomjoueur () {
+#Attente de lancement de la partie et affichage msg serveur
+start() 
+{
+echo "Hello bienvenue sur DUDO"
+[ -p /tmp/perudo_`whoami` ] && cat /tmp/perudo_`whoami` 
+sleep 1
+
+}
+
+
+
+
+nomjoueur() 
+{
 #Affiche le nom du joueur
 tput cup 3 31
 echo -e "${Red}  Bonjour ${JOUEUR} ${ResetColor}"
 }
 
-function lance () {
+lance() 
+{
 #Affiche le premier lancé de dés
 tput cup 4 20
 echo -e "${Blue}         #####################${ResetColor}"
@@ -57,13 +71,13 @@ echo -e "${Blue}         #####################${ResetColor}"
 }
 
 
-
 # function veriftour () {
 # if 
 
 # }
 
-function premier () {
+premier() 
+{
 #Premiere annonce du premier joueur
 tput cup 8 27
 echo "${Green}Que souhaites-tu annoncer ?${ResetColor}"
@@ -95,6 +109,8 @@ fi
 
 
 #Code
+
+start
 
 nomjoueur
 
