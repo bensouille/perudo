@@ -33,23 +33,11 @@ BlueCyan="$(tput bold ; tput setaf 6)"
 
 # Fonctions
 
-log()
-{
-echo -n "${1}"
-a=0
-for p in `top -n1 -b | grep perudoclt.sh | awk '{ print $2 }'` ; do
-		[ -p /tmp/perudo_${p} ] && rm -f /tmp/perudo_*
-		mkfifo /tmp/perudo_${p}
-		a=$(($a+1))
-		echo ${1} > /tmp/perudo_${p} 
-	done
-}
-
-joueurs() 
+main() 
 {
 	while true ; do
 	clear
-	userco=`top -n1 -b | grep perudoclt.sh | sort -u | wc -l`
+	userco=`top -n1 -b | grep perudoclt | awk '{ print $2 }' | wc -l`
 	intro
 	#1er read demande joueurs
 		${line} 4 22
@@ -60,7 +48,22 @@ joueurs()
 	verifsup1userco
 	done	
 }
+# Creer un fichier fifo pour chaque joueurs
+fifo () {
+for f in `top -n1 -b | grep perudoclt | awk '{ print $2 }'` ; do
+	[ -p /tmp/perudo_${f} ] && rm -f /tmp/perudo_*
+	mkfifo /tmp/perudo_${f}
+done
+}
 
+#equivalent d'un echo sur serveur et sur client via fifo
+log()
+{
+echo -n "${1}"
+for p in `top -n1 -b | grep perudoclt | awk '{ print $2 }'` ; do
+		echo ${1} > /tmp/perudo_${p} 
+done
+}
 
 #INTRO
 intro() 
@@ -80,13 +83,13 @@ intro()
 verifnullnum() 
 {
 	[ -z ${nbjoueurs} ] || [ ${nbjoueurs} = "" ] && 
-	joueurs
+	main
 	 ${line} 6 22
 	echo "${nbjoueurs}" | grep -e '^[[:digit:]]*$'  > /dev/null ;
  	if ! [ $? -eq 0 ] ; then 				
  		echo "${Red}Un chiffre${ResetColor}" && 				
  		sleep 2 &&  			
- 		joueurs
+ 		main
  	fi
 }
 
@@ -95,7 +98,7 @@ verifsup6eq1()
 {
 	${line} 6 22
 	if [ ${nbjoueurs} -gt 6 ] && echo -n "${Red}Attention tu peux pas jouer à plus de 6 !!${ResetColor}" && sleep 2
-		then joueurs 
+		then main 
 	fi
 		${line} 6 22	
 		[ ${nbjoueurs} -eq 1 ] && echo -n "${Red}Attention tu peux pas jouer tout seul !!${ResetColor}" && sleep 2
@@ -118,7 +121,7 @@ verifsup1userco()
 		read -p "${Green}votre choix : ${ResetColor}" choix1
 			case "${choix1}" in
 				1) attente && break ;;
-				2) joueurs ;;
+				2) main ;;
 				3) exit ;;
 				*) echo "1, 2 ou 3 ! merci !" ;;
 			esac
@@ -133,7 +136,7 @@ verifsup1userco()
 		read -p "${Green}votre choix : ${ResetColor}" choix2 &&
 			case "${choix2}" in
 				1) decojoueur ;;
-				2) joueurs ;;
+				2) main ;;
 				3) exit ;;
 				*) echo "1, 2 ou 3 ! merci !" ;;
 			esac
@@ -146,47 +149,30 @@ verifsup1userco()
 	fi
 }
 
-decojoueur() 
-{
-echo `who | cut -d" " -f1 | sort -u`
-read -p "${Green}nom du joueur à deconnecter : ${ResetColor}" nompts
-`sudo pkill -KILL -u ${nompts}`
-joueurs
-}
-
-#Initialise l'array avec le nom des users	
-arrayusers() 
-{
-a=0
-for i in `top -n1 -b | grep perudoclt.sh | awk '{ print $2 }'` ; do
-		users_nom[${a}]="${i}"
-		a=$(($a+1))
-done
-}
-
 #Attente de connexion des joueurs
 attente() 
 {
 clear
+fifo
 while [ ${userco} -ne ${nbjoueurs} ] ; do
 ${line} 5 20
 	log "${userco} joueur(s) connecté(s) ! On attend sagement, merci |" 
-	sleep 0.1  
+	sleep 0.5  
 ${line} 5 20
 	log "${userco} joueur(s) connecté(s) ! On attend sagement, merci /"
-	sleep 0.1 
+	sleep 0.5 
 ${line} 5 20
 	log "${userco} joueur(s) connecté(s) ! On attend sagement, merci -"
-	sleep 0.1 
+	sleep 0.5 
 ${line} 5 20
 	log "${userco} joueur(s) connecté(s) ! On attend sagement, merci |"
-	sleep 0.1 
+	sleep 0.5 
 ${line} 5 20
 	log  "${userco} joueur(s) connecté(s) ! On attend sagement, merci -"
-	sleep 0.1 
+	sleep 0.5 
 ${line} 5 20
 	log "${userco} joueur(s) connecté(s) ! On attend sagement, merci \\"   
-	sleep 0.1 
+	sleep 0.5 
 userco=`top -n1 -b | grep perudoclt | sort -u | wc -l`
 done
 ${line} 6 28
@@ -194,40 +180,68 @@ echo "${Green}Initialisation la partie !${ResetColor}"
 launchgame
 }
 
+decojoueur() 
+{
+echo `who | cut -d" " -f1 | sort -u`
+read -p "${Green}nom du joueur à deconnecter : ${ResetColor}" nompts
+`sudo pkill -KILL -u ${nompts}`
+main
+}
+
+
 #Annonce debut de partie et place le nom des joueurs dans un fichier
 launchgame() 
 {
 ${line} 7 28
 	log "${BlueCyan}NB joueurs connectés : ${userco}${ResetColor}"
 ${line} 8 28
+
 	log "${BlueCyan}NB joueurs selectionné : ${nbjoueurs}${ResetColor}"
-${line} 8 28
-		log "${Green}Tous les Joueurs sont operationnels${ResetColor}" &&
+${line} 9 28
+		log "${Green}Tous les Joueurs sont operationnels${ResetColor}" &&	
 		sleep 1 &&
+${line} 10 28
 		log "${Green}Definition du premier joueur à commencer ${ResetColor}" 
 		sleep 1
-echo ${users_nom[*]} > /home/steph/perudo/users
+arrayusers
+echo ${users_nom[*]} > /$HOME/perudo/users
 firstplayer
 }
 
+#Initialise le tableau du nom des users	
+arrayusers() 
+{
+a=0	
+for i in `top -n1 -b | grep perudoclt | awk '{ print $2 }'` ; do
+		users_nom[${a}]="${i}"
+		a=$(($a+1))
+done
+}
+
+#Definit le premier joueur
 firstplayer() 
 {
+${line} 11 28
 echo "${Green}Qui sera le premier joueur ?${ResetColor}"	
 # random sur valeur du tableau
 i=$(echo $((RANDOM%`cat users | wc -w`))) 
-echo ${users_nom[${i}]}
+first=$(echo "${Green}${users_nom[${i}]}${ResetColor}")
+echo ${first}
 }
-
 
 
 
 #Code
 
-joueurs
+main
 
-arrayusers
+fifo 
 
 launchgame
+
+
+
+
 
 
 
