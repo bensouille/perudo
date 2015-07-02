@@ -38,7 +38,7 @@ BlueCyan="$(tput bold ; tput setaf 6)"
 #Attente de lancement de la partie et affichage msg serveur
 start() 
 {
-echo -n "Hello bienvenue sur DUDO"
+echo -n "En attente du serveur"
 while true ; do
 [ -p /tmp/perudo_`whoami` ] && cat /tmp/perudo_`whoami` 
 sleep 1

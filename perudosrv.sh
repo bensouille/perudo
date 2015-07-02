@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+# set -x
 ####PERRUDO SRV####
 
 #### Initialisation des variables ####
@@ -36,7 +36,6 @@ BlueCyan="$(tput bold ; tput setaf 6)"
 main() 
 {
 	while true ; do
-	clear
 	userco=`top -n1 -b | grep perudoclt | awk '{ print $2 }' | wc -l`
 	intro
 	#1er read demande joueurs
@@ -49,9 +48,9 @@ main()
 	done	
 }
 # Creer un fichier fifo pour chaque joueurs
-fifo () {
+check_clt () {
 for f in `top -n1 -b | grep perudoclt | awk '{ print $2 }'` ; do
-	[ -p /tmp/perudo_${f} ] && rm -f /tmp/perudo_*
+	[ -f /tmp/perudo_${f} ] && rm -f /tmp/perudo_${f}
 	mkfifo /tmp/perudo_${f}
 done
 }
@@ -111,7 +110,7 @@ verifsup1userco()
 		${line} 6 0	
 		echo "${Green}${userco} joueurs connectés : "  
 		${line} 7 0	
-		echo "${Green}`top -n1 -b | grep perudoclt.sh | cut -d" " -f5 | sort -u` ${ResetColor}" 
+		echo "${Green}`top -n1 -b | grep perudoclt | cut -d" " -f5 | sort -u` ${ResetColor}" 
 		${line} $((8+${userco})) 0
 		echo "${Green}Que souhaitez vous faire ? : ${ResetColor}"
 		echo "${Green}1) Attendre d'autre joueur ${ResetColor}"
@@ -145,6 +144,7 @@ verifsup1userco()
 		clear &&
 		${line} 4 28 &&
 		echo -n "${Green}Initialisation la partie !${ResetColor}" && 
+		check_clt
 		break 
 	fi
 }
@@ -153,8 +153,9 @@ verifsup1userco()
 attente() 
 {
 clear
-fifo
-while [ ${userco} -ne ${nbjoueurs} ] ; do
+while true ; do
+check_clt
+[ ${userco} -eq ${nbjoueurs} ] && break
 ${line} 5 20
 	log "${userco} joueur(s) connecté(s) ! On attend sagement, merci |" 
 	sleep 0.5  
@@ -226,7 +227,7 @@ echo "${Green}Qui sera le premier joueur ?${ResetColor}"
 # random sur valeur du tableau
 i=$(echo $((RANDOM%`cat users | wc -w`))) 
 first=$(echo "${Green}${users_nom[${i}]}${ResetColor}")
-echo ${first}
+log ${first}
 }
 
 
@@ -235,7 +236,7 @@ echo ${first}
 
 main
 
-fifo 
+check_clt 
 
 launchgame
 
