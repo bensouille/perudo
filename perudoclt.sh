@@ -12,6 +12,8 @@ DES5=$((RANDOM%6+1))
 
 #### Initialisation des variables ####
 
+line='tput cup'
+
 #+ Mode normal
 ResetColor="$(tput sgr0)"
 # "Surligné" (bold)
@@ -36,11 +38,13 @@ BlueCyan="$(tput bold ; tput setaf 6)"
 
 
 #Attente de lancement de la partie et affichage msg serveur
+
 start() 
 {
-echo -n "En attente du serveur"
+echo -en "En attente du serveur\r"
 while true ; do
-[ -p /tmp/perudo_`whoami` ] && cat /tmp/perudo_`whoami` 
+${line} 5 20	
+[ -e /tmp/perudo_`whoami` ] && cat /tmp/perudo_`whoami` 
 sleep 1
 done
 }
@@ -113,13 +117,13 @@ fi
 
 start
 
-nomjoueur
+# nomjoueur
 
-lance
+# lance
 
-premier
+# premier
 
-tourpartour
+# tourpartour
 
 
 
