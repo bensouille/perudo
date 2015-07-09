@@ -1,5 +1,5 @@
 #!/bin/bash
-# set -x
+set -x
 ####PERRUDO !!!####
 
 #Variables globales du jeu
@@ -35,80 +35,83 @@ BlueCyan="$(tput bold ; tput setaf 6)"
 
 #### Fin initialisation variables ####
 
+clean_up()	
+{
+	rm -f /tmp/dudo/dudo_`whoami`
+	clear
+}
 
 #Attente de lancement de la partie et affichage msg serveur
 verif_proc_srv_clt_nbfifo()
 {
-srvco=`ps aux | grep dudo_main | sort -u | grep -v grep | wc -l `
-userco=`top -n1 -b | grep dudo_clt | awk '{ print $2 }' | sort -u | grep -v grep | wc -l`
-nbfifo=`find /tmp/dudo/ -type p | wc -l`	
+	srvco=`ps aux | grep dudo_main | sort -u | grep -v grep | wc -l `
+	userco=`ps aux | grep dudo_clt | grep -v grep | awk '{ print $1 }' | sort -u | wc -l`
+	nbfifo=`find /tmp/dudo/ -type p | wc -l`	
+}
+
+verif_srvco_userco_sup_nbfifo()
+{
+	[ ${srvco} -gt 0 ] && [ ${userco} -eq ${nbfifo} ] && break
 }
 
 wait_clt()
 {
-while true ; do
-	verif_proc_srv_clt_nbfifo
-	echo -en "${userco} joueur(s) connecté(s) ! En attente des autres joueurs et du serveur, merci |\r" 
-	sleep 0.5  
-	echo -en "${userco} joueur(s) connecté(s) ! En attente des autres joueurs et du serveur, merci /\r"
-	sleep 0.5 
-	echo -en "${userco} joueur(s) connecté(s) ! En attente des autres joueurs et du serveur, merci -\r"
-	sleep 0.5 
-	echo -en "${userco} joueur(s) connecté(s) ! En attente des autres joueurs et du serveur, merci |\r"
-	sleep 0.5 
-	echo -en "${userco} joueur(s) connecté(s) ! En attente des autres joueurs et du serveur, merci -\r"
-	sleep 0.5 
-	echo -en "${userco} joueur(s) connecté(s) ! En attente des autres joueurs et du serveur, merci \\ \r"   
-	sleep 1
-	[ ${srvco} -gt 0 ] && [ ${userco} -eq ${nbfifo} ] && break
-done
+	while true ; do
+		verif_proc_srv_clt_nbfifo
+		verif_srvco_userco_sup_nbfifo
+		echo -en "${userco} joueur(s) connecté(s) ! En attente des autres joueurs et du serveur, merci |\r" 
+		verif_proc_srv_clt_nbfifo
+		verif_srvco_userco_sup_nbfifo 
+		echo -en "${userco} joueur(s) connecté(s) ! En attente des autres joueurs et du serveur, merci /\r"
+		verif_proc_srv_clt_nbfifo
+		verif_srvco_userco_sup_nbfifo 
+		echo -en "${userco} joueur(s) connecté(s) ! En attente des autres joueurs et du serveur, merci -\r"
+		verif_proc_srv_clt_nbfifo
+		verif_srvco_userco_sup_nbfifo 
+		echo -en "${userco} joueur(s) connecté(s) ! En attente des autres joueurs et du serveur, merci |\r"
+		verif_proc_srv_clt_nbfifo
+		verif_srvco_userco_sup_nbfifo 
+		echo -en "${userco} joueur(s) connecté(s) ! En attente des autres joueurs et du serveur, merci -\r"
+		verif_proc_srv_clt_nbfifo
+		verif_srvco_userco_sup_nbfifo
+		echo -en "${userco} joueur(s) connecté(s) ! En attente des autres joueurs et du serveur, merci \\ \r"
+	done
 }
 
-nomjoueur() 
+nom_joueur() 
 {
 # Affiche le nom du joueur
-sleep 5
-tput cup 3 31
-echo "${Red}  Bonjour ${JOUEUR} ${ResetColor}"
+	tput cup 3 31
+	echo "${Red}  Bonjour ${JOUEUR} ${ResetColor}"
 }
 
 start() 
 {
-echo -en "En attente du serveur\r"
-while true ; do
-${line} 5 20	
-[ -e /tmp/perudo_`whoami` ] && cat /tmp/perudo_`whoami` 
-sleep 1
-done
+	echo -en "En attente du serveur\r"
+	while true ; do
+	echo -en "En attente du serveur\r"
+	[ -p /tmp/dudo/dudo_`whoami` ] && break 
+	done
+	sleep 15
+	dice_drawing_color
 }
 
-# dice_drawing() 
+# num_tour()
 # {
-# Affiche le premier lancé de dés
-# tput cup 4 20
-# echo -e "${Blue}         #####################${ResetColor}"
- # 
-# tput cup 5 20
-# echo -e "${Red}         #       Tour n°x      #${ResetColor}"
 
-# tput cup 6 20
-# echo -e "${Green}         #`tput bold`[`if [ ${DES1} = 1 ] ; then echo @ ; else echo ${DES1} ; fi`] [`if [ ${DES2} = 1 ] ; then echo @ ; else echo ${DES2} ; fi`] [`if [ ${DES3} = 1 ] ; then echo @ ; else echo ${DES3} ; fi`] [`if [ ${DES4} = 1 ] ; then echo @ ; else echo ${DES4} ; fi`] [`if [ ${DES5} = 1 ] ; then echo @ ; else echo ${DES5} ; fi`]#${ResetColor}"
- # 
-# tput cup 7 20
-# echo -e "${Blue}         #####################${ResetColor}"
 # }
 
 dice_drawing() 
 {
-# lancé de dés
-echo  "Tour n"
-echo  "$(if [ ${DES1} = 1 ] ; then echo @ ; else echo ${DES1} ; fi) $(if [ ${DES2} = 1 ] ; then echo @ ; else echo ${DES2} ; fi) $(if [ ${DES3} = 1 ] ; then echo @ ; else echo ${DES3} ; fi) $(if [ ${DES4} = 1 ] ; then echo @ ; else echo ${DES4} ; fi) $(if [ ${DES5} = 1 ] ; then echo @ ; else echo ${DES5} ; fi)"
+	# lancé de dés
+	echo  "Tour n"
+	echo  "$(if [ ${DES1} = 1 ] ; then echo @ ; else echo ${DES1} ; fi) $(if [ ${DES2} = 1 ] ; then echo @ ; else echo ${DES2} ; fi) $(if [ ${DES3} = 1 ] ; then echo @ ; else echo ${DES3} ; fi) $(if [ ${DES4} = 1 ] ; then echo @ ; else echo ${DES4} ; fi) $(if [ ${DES5} = 1 ] ; then echo @ ; else echo ${DES5} ; fi)"
 }
 
 dice_drawing_color() 
 {
-dice_drawing > dice_ascii
-toilet -tf mono12 --gay < dice_ascii 
+	dice_drawing > dice_ascii_`whoami`
+	toilet -tf mono12 --gay < dice_ascii_`whoami` 
 }
 # function veriftour () {
 # if 
@@ -149,20 +152,15 @@ toilet -tf mono12 --gay < dice_ascii
 
 #Code
 
-# wait_clt
+clean_up
 
-# nomjoueur
+wait_clt
 
-# start
+nom_joueur
 
-
-
-
-#  
+start
 
 # start
-
-# nomjoueur
 
 # lance
 
