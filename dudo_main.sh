@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -x
+# set -x
 
 ####PERRUDO SRV####
 
@@ -56,7 +56,7 @@ stop_proc_dudo_clt()
 			read -p "${Green}votre choix : ${ResetColor}" choix1			
 			case "${choix1}" in
 					1) sudo pkill -KILL dudo_clt.sh ;;
-					2) break 2 ;;
+					2) break  ;;
 					3) exit ;;
 					*) echo "1, 2 ou 3 ! merci !" ;;	
 			esac
@@ -79,7 +79,7 @@ display_header()
 get_nb_player()
 {
 while true ; do
-clean_up
+clear
 display_header
 ${line} 4 0
 echo -n "${Red}Mettre un chiffre entre 2 et 6 please ! ${ResetColor}"

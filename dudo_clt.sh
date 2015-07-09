@@ -1,5 +1,5 @@
 #!/bin/bash
-# set -x
+set -x
 ####PERRUDO !!!####
 
 #Variables globales du jeu
@@ -9,7 +9,7 @@ DES2=$((RANDOM%6+1))
 DES3=$((RANDOM%6+1))
 DES4=$((RANDOM%6+1))
 DES5=$((RANDOM%6+1))
-srvco=`top -n1 -b | grep dudo_srv | awk '{ print $2 }' | sort -u | wc -l`
+srvco=`top -n1 -b | grep dudo_main | awk '{ print $2 }' | sort -u | wc -l`
 #### Initialisation des variables ####
 
 line='tput cup'
@@ -41,9 +41,10 @@ BlueCyan="$(tput bold ; tput setaf 6)"
 wait_clt()
 {
 while true ; do
+	srvco=`top -n1 -b | grep dudo_main | awk '{ print $2 }' | sort -u | wc -l`
 	nbfifo=`find /tmp/dudo/ -type p | wc -l` 
 	userco=`top -n1 -b | grep dudo_clt | awk '{ print $2 }' | sort -u | wc -l`
-	[ ${userco} -eq ${nbfifo} ] && break
+	[ ${userco} -eq ${nbfifo} ] && [ ${srvco} -gt 0 ] && sleep 5 &&	break
 	echo -en "${userco} joueur(s) connecté(s) ! En attente des autres joueurs et du serveur, merci |\r" 
 	sleep 0.5  
 	echo -en "${userco} joueur(s) connecté(s) ! En attente des autres joueurs et du serveur, merci /\r"
@@ -138,8 +139,6 @@ done
 #Code
 
 wait_clt
-
-verif_srv_co
 
 # start
 
