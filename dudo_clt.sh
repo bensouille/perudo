@@ -38,13 +38,17 @@ BlueCyan="$(tput bold ; tput setaf 6)"
 
 
 #Attente de lancement de la partie et affichage msg serveur
+verif_proc_srv_clt_nbfifo()
+{
+srvco=`top -n1 -b | grep dudo_main | awk '{ print $2 }' | sort -u | wc -l`
+userco=`top -n1 -b | grep dudo_clt | awk '{ print $2 }' | sort -u | wc -l | grep -v grep`
+nbfifo=`find /tmp/dudo/ -type p | wc -l`	
+}
+
 wait_clt()
 {
 while true ; do
-	srvco=`top -n1 -b | grep dudo_main | awk '{ print $2 }' | sort -u | wc -l`
-	nbfifo=`find /tmp/dudo/ -type p | wc -l` 
-	userco=`top -n1 -b | grep dudo_clt | awk '{ print $2 }' | sort -u | wc -l`
-	[ ${userco} -eq ${nbfifo} ] && [ ${srvco} -gt 0 ] && sleep 5 &&	break
+	verif_proc_srv_clt_nbfifo
 	echo -en "${userco} joueur(s) connecté(s) ! En attente des autres joueurs et du serveur, merci |\r" 
 	sleep 0.5  
 	echo -en "${userco} joueur(s) connecté(s) ! En attente des autres joueurs et du serveur, merci /\r"
@@ -56,7 +60,8 @@ while true ; do
 	echo -en "${userco} joueur(s) connecté(s) ! En attente des autres joueurs et du serveur, merci -\r"
 	sleep 0.5 
 	echo -en "${userco} joueur(s) connecté(s) ! En attente des autres joueurs et du serveur, merci \\ \r"   
-	sleep 0.5 
+	sleep 1
+	[ ${srvco} -gt 0 ] && [ ${userco} -eq ${nbfifo} ] && break
 done
 }
 
@@ -75,12 +80,12 @@ done
 
 
 
-# nomjoueur() 
-# {
+nomjoueur() 
+{
 # Affiche le nom du joueur
-# tput cup 3 31
-# echo -e "${Red}  Bonjour ${JOUEUR} ${ResetColor}"
-# }
+tput cup 3 31
+echo -e "${Red}  Bonjour ${JOUEUR} ${ResetColor}"
+}
 
 # lance() 
 # {
@@ -139,6 +144,8 @@ done
 #Code
 
 wait_clt
+
+nomjoueur
 
 # start
 

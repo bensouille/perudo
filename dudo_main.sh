@@ -8,7 +8,6 @@
 #nombre d'utilisateurs connectés
 # userco=`who | wc -l`
 nomjoueur=`whoami`
-userco=`top -n1 -b | grep dudo_clt | awk '{ print $2 }' | sort -u | wc -l`
 #numerotation des lignes
 line='tput cup'
 #+ Mode normal
@@ -36,6 +35,16 @@ BlueCyan="$(tput bold ; tput setaf 6)"
 ############FONCTIONS#################
 ######################################
 
+userco_nb()
+{
+userco=`top -n1 -b | grep dudo_clt | awk '{ print $2 }' | sort -u | wc -l | grep -v grep`	
+}
+
+userco_nom()
+{
+top -n1 -b | grep dudo_clt | awk '{ print $2 }' | sort -u | grep -v grep	
+}
+
 clean_up()	
 {
 	clear
@@ -45,27 +54,40 @@ clean_up()
 
 stop_proc_dudo_clt()
 {
-	while [ ${userco} -gt 0 ] ; do
-			userco=`top -n1 -b | grep dudo_clt | awk '{ print $2 }' | sort -u | wc -l`	
-			echo "${Green}Plusieurs dudo_clt sont lancés${ResetColor}"
-			echo "${Green}Que souhaitez vous faire ? : ${ResetColor}"
-			echo "${Green}1) Les stopper${ResetColor}"
-			echo "${Green}2) Continuer${ResetColor}"
-			echo "${Green}3) Quitter le jeu ${ResetColor}" 
-			# ${line} $((14+${userco})) 0
-			read -p "${Green}votre choix : ${ResetColor}" choix1			
-			case "${choix1}" in
-					1) sudo pkill -KILL dudo_clt.sh ;;
-					2) break  ;;
-					3) exit ;;
-					*) echo "1, 2 ou 3 ! merci !" ;;	
-			esac
-	done
+userco_nb
+while [ ${userco} -gt 0 ] ; do
+		userco_nb	
+		echo "${Green}Plusieurs dudo_clt sont lancés${ResetColor}"
+		echo "${Green}Que souhaitez vous faire ? : ${ResetColor}"
+		echo "${Green}1) Les stopper${ResetColor}"
+		echo "${Green}2) Continuer${ResetColor}"
+		echo "${Green}3) Quitter le jeu ${ResetColor}"
+		echo "${Green}4) Afficher les scripts lancés ${ResetColor}" 
+		# ${line} $((14+${userco})) 0
+		read -p "${Green}votre choix : ${ResetColor}" choix1			
+		case "${choix1}" in
+				1) while true ; do 
+					  sudo pkill -KILL dudo_clt.sh
+					  if [ $? -eq 1 ] ; then 
+					  break 
+					  fi
+					  done
+					  break
+					  ;;
+				2) break  ;;
+				3) exit ;;
+				4) echo ${Red} 
+				   userco_nom
+				   echo ${ResetColor}
+				   ;;
+				*) echo "1, 2 ou 3 ! merci !" ;;	
+		esac
+done
 }
 
 display_header()
 {
-	userco=`top -n1 -b | grep dudo_clt | awk '{ print $2 }' | sort -u | wc -l`
+	userco_nb
 	# ${line} 0 20
 	echo -e "${Blue}##########################################${ResetColor}"
 	# ${line} 1 20
@@ -107,12 +129,12 @@ done
 #Verif si sup à 1 et sup à userco
 verif_gt_userco()
 {
-userco=`top -n1 -b | grep dudo_clt | awk '{ print $2 }' | sort -u | wc -l`
+userco_nb
 if [ "${nbjoueurs}" -gt "${userco}" ] ; then
 	# ${line} 6 0	
 	echo "${Green}${userco} joueurs connectés : "  
 	# ${line} 7 0	
-	echo "${Green}`top -n1 -b | grep dudo_clt | cut -d" " -f5 | sort -u` ${ResetColor}" 
+	echo "${Green}`top -n1 -b | grep dudo_clt | cut -d" " -f5 | sort -u | grep -v grep` ${ResetColor}" 
 	# ${line} $((8+${userco})) 0
 	echo "${Green}Que souhaitez vous faire ? : ${ResetColor}"
 	echo "${Green}1) Attendre d'autre joueur ${ResetColor}"
@@ -131,7 +153,7 @@ fi
 
 verif_lt_userco()  
 {  
-userco=`top -n1 -b | grep dudo_clt | awk '{ print $2 }' | sort -u | wc -l`
+userco_nb
 [ "${nbjoueurs}" -gt 1 ] && 
 [ "${nbjoueurs}" -lt "${userco}" ] && 
 	echo -e "${Green}${userco} joueurs connectés ;) \n`who | cut -d" " -f1 | sort -u` ${ResetColor}" &&
@@ -150,7 +172,7 @@ userco=`top -n1 -b | grep dudo_clt | awk '{ print $2 }' | sort -u | wc -l`
 
 verif_eq_userco()
 {
-userco=`top -n1 -b | grep dudo_clt | awk '{ print $2 }' | sort -u | wc -l`
+userco_nb
 if	[ ${nbjoueurs} -gt 1 ] && [ ${nbjoueurs} -eq ${userco} ]  
 	then
 		start_game
@@ -168,7 +190,7 @@ get_nb_player
 wait_player()
 {
 while true ; do
-	userco=`top -n1 -b | grep dudo_clt | awk '{ print $2 }' | sort -u | wc -l`
+	userco_nb
 	[ ${userco} -eq ${nbjoueurs} ] && break
 	echo -en "${userco} joueur(s) connecté(s) ! En attente des autres joueurs, merci |\r" 
 	sleep 0.5  
@@ -187,25 +209,9 @@ echo "${Green}Tous les joueurs sont connectés${ResetColor}"
 echo "${Green}Initialisation la partie !${ResetColor}"
 }
 
-init_sub_sys() 
-{
-if ! [ -d /tmp/dudo ]
-	then 
-		mkdir /tmp/dudo
-	else
-		for f in `top -n1 -b | grep dudo_clt | awk '{ print $2 }' | sort -u` ; do
-			if  [ ! -e /tmp/dudo/dudo_${f} ]
-				then
-				mkfifo /tmp/dudo/dudo_${f}	
-			fi
-			sleep 1
-		done
-fi
-}
-
 start_game() 
 {
-userco=`top -n1 -b | grep dudo_clt | awk '{ print $2 }' | sort -u | wc -l`
+userco_nb
 init_sub_sys
 # ${line} 7 28
 echo "${BlueCyan}NB joueurs connectés : ${userco}${ResetColor}"
@@ -216,16 +222,32 @@ echo "${Green}Tous les Joueurs sont operationnels${ResetColor}"
 sleep 1
 # ${line} 10 28
 echo "${Green}Definition du premier joueur à commencer ${ResetColor}" 
-sleep 1
+sleep 5
 array_users
 firstplayer
+}
+
+init_sub_sys() 
+{
+if ! [ -d /tmp/dudo ]
+	then 
+		mkdir /tmp/dudo
+	else
+		for f in userco_nb ; do
+			if  [ ! -e /tmp/dudo/dudo_${f} ]
+				then
+				mkfifo /tmp/dudo/dudo_${f}	
+			fi
+			sleep 1
+		done
+fi
 }
 
 #Initialise le tableau du nom des users	
 array_users() 
 {
 a=0	
-for i in `top -n1 -b | grep dudo_clt | awk '{ print $2 }' | sort -u` ; do
+for i in userco_nb ; do
 		users_nom[${a}]="${i}"
 		a=$(($a+1))
 
@@ -254,6 +276,4 @@ verif_gt_userco
 verif_lt_userco
 
 verif_eq_userco
-
-start_game
 
