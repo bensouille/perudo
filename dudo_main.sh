@@ -37,12 +37,12 @@ BlueCyan="$(tput bold ; tput setaf 6)"
 
 userco_nb()
 {
-userco=`top -n1 -b | grep dudo_clt | awk '{ print $2 }' | sort -u | wc -l | grep -v grep`	
+userco=`top -n1 -b | grep dudo_clt | awk '{ print $2 }' | sort -u | grep -v grep | wc -l`	
 }
 
 userco_nom()
 {
-top -n1 -b | grep dudo_clt | awk '{ print $2 }' | sort -u | grep -v grep	
+ps aux | grep dudo_clt | grep -v grep | awk '{ print $1 }' | sort -u	
 }
 
 clean_up()	
@@ -134,7 +134,9 @@ if [ "${nbjoueurs}" -gt "${userco}" ] ; then
 	# ${line} 6 0	
 	echo "${Green}${userco} joueurs connectés : "  
 	# ${line} 7 0	
-	echo "${Green}`top -n1 -b | grep dudo_clt | cut -d" " -f5 | sort -u | grep -v grep` ${ResetColor}" 
+	echo ${Green}
+	userco_nom
+	${ResetColor}
 	# ${line} $((8+${userco})) 0
 	echo "${Green}Que souhaitez vous faire ? : ${ResetColor}"
 	echo "${Green}1) Attendre d'autre joueur ${ResetColor}"
@@ -154,20 +156,23 @@ fi
 verif_lt_userco()  
 {  
 userco_nb
-[ "${nbjoueurs}" -gt 1 ] && 
-[ "${nbjoueurs}" -lt "${userco}" ] && 
-	echo -e "${Green}${userco} joueurs connectés ;) \n`who | cut -d" " -f1 | sort -u` ${ResetColor}" &&
-	echo "Que souhaitez vous faire ? " &&
-	echo "${Green}1) Deco un user${ResetColor}" &&
-	echo "${Green}2) Redefinir le nombre de joueurs ${ResetColor}" &&
-	echo "${Green}3) quitter le jeu ${ResetColor}" &&
-	read -p "${Green}votre choix : ${ResetColor}" choix2 &&
+if [ "${nbjoueurs}" -gt 1 ] && [ "${nbjoueurs}" -lt "${userco}" ] ; then
+	echo "${Green}${userco} joueurs connectés ;)${ResetColor}"
+	echo -n ${Red} 
+	userco_nom 
+	echo -n ${ResetColor}
+	echo "${Blue}Que souhaitez vous faire ?${ResetColor}"  
+	echo "${Green}1) Deconnecter un joueur${ResetColor}" 
+	echo "${Green}2) Redefinir le nombre de joueurs ${ResetColor}" 
+	echo "${Green}3) quitter le jeu ${ResetColor}" 
+	read -p "${Green}votre choix : ${ResetColor}" choix2
 		case "${choix2}" in
 			1) deco_joueur ;;
 			2) get_nb_player ;;
 			3) exit ;;
 			*) echo "1, 2 ou 3 ! merci !" ;;
 		esac
+fi		
 }
 
 verif_eq_userco()
@@ -212,7 +217,6 @@ echo "${Green}Initialisation la partie !${ResetColor}"
 start_game() 
 {
 userco_nb
-init_sub_sys
 # ${line} 7 28
 echo "${BlueCyan}NB joueurs connectés : ${userco}${ResetColor}"
 # ${line} 8 28
@@ -223,7 +227,7 @@ sleep 1
 # ${line} 10 28
 echo "${Green}Definition du premier joueur à commencer ${ResetColor}" 
 sleep 5
-array_users
+init_sub_sys
 firstplayer
 }
 
@@ -233,7 +237,7 @@ if ! [ -d /tmp/dudo ]
 	then 
 		mkdir /tmp/dudo
 	else
-		for f in userco_nb ; do
+		for f in $(userco_nom) ; do
 			if  [ ! -e /tmp/dudo/dudo_${f} ]
 				then
 				mkfifo /tmp/dudo/dudo_${f}	
@@ -247,24 +251,28 @@ fi
 array_users() 
 {
 a=0	
-for i in userco_nb ; do
-		users_nom[${a}]="${i}"
+for i in `ps aux | grep dudo_clt | grep -v grep | awk '{ print $1 }' | sort -u` ; do
+		array_nom[${a}]="${i}"
 		a=$(($a+1))
 
 done
-echo ${users_nom[*]} > /$HOME/perudo/users
+echo ${array_nom[*]} > /$HOME/perudo/users
 }
 
 #Definit le premier joueur
 firstplayer() 
 {
+array_users
 # ${line} 11 28
 echo "${Green}Qui sera le premier joueur ?${ResetColor}"	
 # random sur valeur du tableau
 i=$(echo $((RANDOM%`cat users | wc -w`))) 
-first=$(echo "${Green}${users_nom[${i}]}${ResetColor}")
+first=$(echo "${Green}${array_nom[${i}]}${ResetColor}")
 echo ${first}
+echo ${first} > first_player
 }
+
+
 
 #######CODE#######
 clean_up

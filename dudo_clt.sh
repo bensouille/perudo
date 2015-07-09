@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+# set -x
 ####PERRUDO !!!####
 
 #Variables globales du jeu
@@ -9,7 +9,6 @@ DES2=$((RANDOM%6+1))
 DES3=$((RANDOM%6+1))
 DES4=$((RANDOM%6+1))
 DES5=$((RANDOM%6+1))
-srvco=`top -n1 -b | grep dudo_main | awk '{ print $2 }' | sort -u | wc -l`
 #### Initialisation des variables ####
 
 line='tput cup'
@@ -40,8 +39,8 @@ BlueCyan="$(tput bold ; tput setaf 6)"
 #Attente de lancement de la partie et affichage msg serveur
 verif_proc_srv_clt_nbfifo()
 {
-srvco=`top -n1 -b | grep dudo_main | awk '{ print $2 }' | sort -u | wc -l`
-userco=`top -n1 -b | grep dudo_clt | awk '{ print $2 }' | sort -u | wc -l | grep -v grep`
+srvco=`ps aux | grep dudo_main | sort -u | grep -v grep | wc -l `
+userco=`top -n1 -b | grep dudo_clt | awk '{ print $2 }' | sort -u | grep -v grep | wc -l`
 nbfifo=`find /tmp/dudo/ -type p | wc -l`	
 }
 
@@ -65,29 +64,25 @@ while true ; do
 done
 }
 
-
-
-# start() 
-# {
-# echo -en "En attente du serveur\r"
-# while true ; do
-# ${line} 5 20	
-# [ -e /tmp/perudo_`whoami` ] && cat /tmp/perudo_`whoami` 
-# sleep 1
-# done
-# }
-
-
-
-
 nomjoueur() 
 {
 # Affiche le nom du joueur
+sleep 5
 tput cup 3 31
-echo -e "${Red}  Bonjour ${JOUEUR} ${ResetColor}"
+echo "${Red}  Bonjour ${JOUEUR} ${ResetColor}"
 }
 
-# lance() 
+start() 
+{
+echo -en "En attente du serveur\r"
+while true ; do
+${line} 5 20	
+[ -e /tmp/perudo_`whoami` ] && cat /tmp/perudo_`whoami` 
+sleep 1
+done
+}
+
+# dice_drawing() 
 # {
 # Affiche le premier lancé de dés
 # tput cup 4 20
@@ -103,7 +98,18 @@ echo -e "${Red}  Bonjour ${JOUEUR} ${ResetColor}"
 # echo -e "${Blue}         #####################${ResetColor}"
 # }
 
+dice_drawing() 
+{
+# lancé de dés
+echo  "Tour n"
+echo  "$(if [ ${DES1} = 1 ] ; then echo @ ; else echo ${DES1} ; fi) $(if [ ${DES2} = 1 ] ; then echo @ ; else echo ${DES2} ; fi) $(if [ ${DES3} = 1 ] ; then echo @ ; else echo ${DES3} ; fi) $(if [ ${DES4} = 1 ] ; then echo @ ; else echo ${DES4} ; fi) $(if [ ${DES5} = 1 ] ; then echo @ ; else echo ${DES5} ; fi)"
+}
 
+dice_drawing_color() 
+{
+dice_drawing > dice_ascii
+toilet -tf mono12 --gay < dice_ascii 
+}
 # function veriftour () {
 # if 
 
@@ -143,9 +149,16 @@ echo -e "${Red}  Bonjour ${JOUEUR} ${ResetColor}"
 
 #Code
 
-wait_clt
+# wait_clt
 
-nomjoueur
+# nomjoueur
+
+# start
+
+
+
+
+#  
 
 # start
 
