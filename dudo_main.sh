@@ -37,7 +37,7 @@ BlueCyan="$(tput bold ; tput setaf 6)"
 
 userco_nb()
 {
-	userco=`top -n1 -b | grep dudo_clt | awk '{ print $2 }' | sort -u | grep -v grep | wc -l`	
+	userco=`ps aux | grep dudo_clt | grep -v grep | awk '{ print $1 }' | sort -u | wc -l`	
 }
 
 userco_nom()
@@ -47,6 +47,7 @@ userco_nom()
 
 clean_up()	
 {
+	mkdir /tmp/dudo
 	rm -f /tmp/dudo/dudo_*
 	clear
 	stop_proc_dudo_clt
