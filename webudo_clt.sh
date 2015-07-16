@@ -37,16 +37,16 @@ BlueCyan="$(tput bold ; tput setaf 6)"
 
 clean_up()	
 {
-	rm -f /tmp/dudo/dudo_`whoami`
+	rm -f /tmp/webudo/webudo_`whoami`
 	clear
 }
 
 #Attente de lancement de la partie et affichage msg serveur
 verif_proc_srv_clt_nbfifo()
 {
-	srvco=`ps aux | grep dudo_main | sort -u | grep -v grep | wc -l `
-	userco=`ps aux | grep dudo_clt | grep -v grep | awk '{ print $1 }' | sort -u | wc -l`
-	nbfifo=`find /tmp/dudo/ -type p | wc -l`	
+	srvco=`ps aux | grep webudo_main | sort -u | grep -v grep | wc -l `
+	userco=`ps aux | grep webudo_clt | grep -v grep | awk '{ print $1 }' | sort -u | wc -l`
+	nbfifo=`find /tmp/webudo/ -type p | wc -l`	
 }
 
 verif_srvco_userco_sup_nbfifo()
@@ -83,16 +83,19 @@ nom_joueur()
 # Affiche le nom du joueur
 	tput cup 3 31
 	echo "${Red}  Bonjour ${JOUEUR} ${ResetColor}"
+	echo " Bienvenu dans WEBUDO !!"
+	echo " IciOn ne dit pas Paco mais Aro"
 }
+
 
 start() 
 {
 	echo -en "En attente du serveur\r"
 	while true ; do
 	echo -en "En attente du serveur\r"
-	[ -p /tmp/dudo/dudo_`whoami` ] && break 
+	[ -p /tmp/webudo/webudo_`whoami` ] && break 
 	done
-	sleep 15
+	sleep 5
 	dice_drawing_color
 }
 
@@ -126,7 +129,7 @@ dice_drawing_color()
 # tput cup 9 23
 # echo "${Green}Exemples : 2D2 ou 3d5 ou 46 ou 6.4${ResetColor}"
 # tput cup 10 0
-# echo "${Red}ATTENTION !!! Au premier tour tu n'as pas le droit d'utiliser les DUDO !!!${ResetColor}"
+# echo "${Red}ATTENTION !!! Au premier tour tu n'as pas le droit d'utiliser les webudo !!!${ResetColor}"
 # tput cup 11 0
 
 # if [ -a /tmp/perudo/tour ] ; then

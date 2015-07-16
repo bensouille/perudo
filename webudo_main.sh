@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -x
+# set -x
 
 ####PERRUDO SRV####
 
@@ -37,28 +37,28 @@ BlueCyan="$(tput bold ; tput setaf 6)"
 
 userco_nb()
 {
-	userco=`ps aux | grep dudo_clt | grep -v grep | awk '{ print $1 }' | sort -u | wc -l`	
+	userco=`ps aux | grep webudo_clt | grep -v grep | awk '{ print $1 }' | sort -u | wc -l`	
 }
 
 userco_nom()
 {
-	ps aux | grep dudo_clt | grep -v grep | awk '{ print $1 }' | sort -u	
+	ps aux | grep webudo_clt | grep -v grep | awk '{ print $1 }' | sort -u	
 }
 
 clean_up()	
 {
-	mkdir /tmp/dudo
-	rm -f /tmp/dudo/dudo_*
+	mkdir /tmp/webudo 2> /dev/null
+	rm -f /tmp/webudo/webudo_*
 	clear
-	stop_proc_dudo_clt
+	stop_proc_webudo_clt
 }
 
-stop_proc_dudo_clt()
+stop_proc_webudo_clt()
 {
 	userco_nb
 	while [ ${userco} -gt 0 ] ; do
 			userco_nb	
-			echo "${Green}Plusieurs dudo_clt sont lancés${ResetColor}"
+			echo "${Green}Plusieurs webudo_clt sont lancés${ResetColor}"
 			echo "${Green}Que souhaitez vous faire ? : ${ResetColor}"
 			echo "${Green}1) Les stopper${ResetColor}"
 			echo "${Green}2) Continuer${ResetColor}"
@@ -68,7 +68,7 @@ stop_proc_dudo_clt()
 			read -p "${Green}votre choix : ${ResetColor}" choix1			
 			case "${choix1}" in
 					1) while true ; do 
-						  sudo pkill -KILL dudo_clt.sh
+						  sudo pkill -KILL webudo_clt.sh
 						  if [ $? -eq 1 ] ; then 
 						  break 
 						  fi
@@ -92,7 +92,7 @@ display_header()
 	# ${line} 0 20
 	echo -e "${Blue}##########################################${ResetColor}"
 	# ${line} 1 20
-	echo -e "${Green}#         Bienvenue sur DUDO !!!         #${ResetColor}"
+	echo -e "${Green}#         Bienvenue dans WEBUDO !!!         #${ResetColor}"
 	# ${line} 2 21
 	echo -e "${Green}#         `echo ${userco} "joueurs connectés"`            #${ResetColor}"	 
 	# ${line} 3 20
@@ -233,14 +233,14 @@ start_game()
 
 init_sub_sys() 
 {
-	if ! [ -d /tmp/dudo ]
+	if ! [ -d /tmp/webudo ]
 		then 
-			mkdir /tmp/dudo
+			mkdir /tmp/webudo
 		else
 			for f in $(userco_nom) ; do
-				if  [ ! -e /tmp/dudo/dudo_${f} ]
+				if  [ ! -e /tmp/webudo/webudo_${f} ]
 					then
-					mkfifo /tmp/dudo/dudo_${f}	
+					mkfifo /tmp/webudo/webudo_${f}	
 				fi
 				sleep 1
 			done
@@ -251,7 +251,7 @@ init_sub_sys()
 array_users() 
 {
 	a=0	
-	for u in `ps aux | grep dudo_clt | grep -v grep | awk '{ print $1 }' | sort -u` ; do
+	for u in `ps aux | grep webudo_clt | grep -v grep | awk '{ print $1 }' | sort -u` ; do
 			array_nom[${a}]="${u}"
 			a=$(($a+1))
 	done
